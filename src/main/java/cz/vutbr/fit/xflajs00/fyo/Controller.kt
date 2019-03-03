@@ -2,7 +2,12 @@ package cz.vutbr.fit.xflajs00.fyo
 
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
+import javafx.scene.control.Slider
+import javafx.scene.control.TextField
+import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
+import javafx.util.converter.NumberStringConverter
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.JFreeChart
 import org.jfree.data.time.Day
@@ -14,6 +19,15 @@ import java.awt.geom.Rectangle2D
 class Controller {
     @FXML
     private var stackPane: StackPane? = null
+    @FXML
+    private var chartPane: Pane? = null
+    @FXML
+    private var confVBox: VBox? = null
+    @FXML
+    private var wavelengthInput: TextField? = null
+    @FXML
+    private var wavelengthSlider: Slider? = null
+
 
     @FXML
     fun initialize() {
@@ -26,9 +40,28 @@ class Controller {
         dataset.addSeries(t1)
         val chart = ChartFactory.createTimeSeriesChart("test", null, null, dataset)
         val chartCanvas = ChartCanvas(chart)
-        stackPane?.children?.add(chartCanvas)
-        chartCanvas.widthProperty().bind(stackPane?.widthProperty())
-        chartCanvas.heightProperty().bind(stackPane?.heightProperty())
+        chartPane?.children?.add(chartCanvas)
+        chartCanvas.widthProperty().bind(chartPane?.widthProperty())
+        chartCanvas.heightProperty().bind(chartPane?.heightProperty())
+
+        wavelengthInput?.textProperty()?.addListener { _, oldValue, newValue ->
+            if (newValue.toDoubleOrNull() == null) {
+                wavelengthInput?.text = oldValue
+            }
+            wavelengthInput?.text = newValue.toInt().toString()
+        }
+        wavelengthInput?.textProperty()?.bindBidirectional(wavelengthSlider?.valueProperty(), CustomIntStringConverter())
+    }
+
+    inner class CustomIntStringConverter : NumberStringConverter() {
+
+        override fun toString(value: Number?): String {
+            return value?.toInt().toString()
+        }
+
+        override fun fromString(value: String?): Number {
+            return value?.toIntOrNull() ?: return 0
+        }
     }
 
     inner class ChartCanvas(private val chart: JFreeChart) : Canvas() {

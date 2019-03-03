@@ -18,8 +18,8 @@ class Main : javafx.application.Application() {
         val loader = FXMLLoader()
         loader.location = javaClass.classLoader.getResource("sample.fxml")
         val root = loader.load<Parent>()
-        primaryStage?.title = "Hello World"
-        primaryStage?.scene = Scene(root, 300.0, 275.0)
+        primaryStage?.title = "FYO diffraction"
+        primaryStage?.scene = Scene(root)
         primaryStage?.show()
     }
 }
