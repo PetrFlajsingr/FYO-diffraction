@@ -36,40 +36,41 @@
       </Label>
       <Separator prefWidth="200.0" />
         <Label text="Vlnová délka:" />
-      <Slider fx:id="wavelengthSlider" blockIncrement="1.0" max="1000.0" />
+        <Slider fx:id="wavelengthSlider" blockIncrement="1.0" majorTickUnit="250.0" max="1001.0" minorTickCount="5"
+                showTickLabels="true" showTickMarks="true" value="500.0"/>
         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="240.0">
-            <TextField fx:id="wavelengthInput" />
+            <TextField fx:id="wavelengthInput" text="500"/>
             <Label text="nm" />
         </HBox>
       <Separator prefWidth="200.0" />
       <Label text="Počet štěrbin" />
-      <TextField fx:id="slitCountInput">
+        <TextField fx:id="slitCountInput" text="1">
          <VBox.margin>
             <Insets bottom="6.0" top="7.0" />
          </VBox.margin></TextField>
       <Separator prefWidth="200.0" />
       <Label text="Šířka štěrbin" />
         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
-            <TextField fx:id="slitWidthInput" />
+            <TextField fx:id="slitWidthInput" text="5000"/>
             <Label text="nm" />
         </HBox>
       <Label text="Vzdálenost štěrbin" />
         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
-            <TextField fx:id="slitDistInput" />
+            <TextField fx:id="slitDistInput" text="25000"/>
             <Label text="nm" />
         </HBox>
       <Separator prefWidth="200.0" />
       <Label text="Projekční vzdálenost" />
-      <Slider fx:id="projectDistSlider" />
-      <TextField fx:id="projectDistInput">
+        <Slider fx:id="projectDistSlider" blockIncrement="1.0" max="20.0" min="0.1" value="1.0"/>
+        <TextField fx:id="projectDistInput" text="1">
          <VBox.margin>
             <Insets bottom="6.0" top="7.0" />
          </VBox.margin></TextField>
       <Separator prefWidth="200.0" />
     </VBox>
    <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowSpan="3" />
-   <Button mnemonicParsing="false" onAction="#test" text="Button" GridPane.columnIndex="2" />
-    <Pane fx:id="intensityPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
-        <Canvas fx:id="intensityCanvas" height="200.0" layoutX="48.0" layoutY="14.0" width="200.0"/>
+    <Pane fx:id="intensityPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2">
+        <Canvas fx:id="intensityCanvas" height="211.0" width="246.0"/>
     </Pane>
+    <Button mnemonicParsing="false" onAction="#graph" text="Button" GridPane.rowIndex="2"/>
  </GridPane>

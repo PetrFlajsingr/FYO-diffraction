@@ -3,7 +3,6 @@ package cz.vutbr.fit.xflajs00.fyo
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
 
-
 fun drawIntensity(canvas: Canvas, tmp: Array<Double>, waveLength: Double, scaleFactor: Double = 1.0) {
     val gc = canvas.graphicsContext2D
 
@@ -68,9 +67,9 @@ fun waveLengthToRGB(wavelength: Double): DoubleArray {
         green = 0.0
         blue = 0.0
     } else {
-        red = 0.0
-        green = 0.0
-        blue = 0.0
+        red = 1.0
+        green = 1.0
+        blue = 1.0
     }
 
     factor = if (wlen >= 380 && wlen < 420) {
@@ -80,13 +79,13 @@ fun waveLengthToRGB(wavelength: Double): DoubleArray {
     } else if (wlen >= 701 && wlen < 781) {
         0.3 + 0.7 * (780 - wlen) / (780 - 700)
     } else {
-        0.0
+        0.5
     }
 
     val rgb = DoubleArray(3)
-    rgb[0] = if (red == 0.0) 0.0 else Math.pow(red * factor, gamma)
-    rgb[1] = if (green == 0.0) 0.0 else Math.pow(green * factor, gamma)
-    rgb[2] = if (blue == 0.0) 0.0 else Math.pow(blue * factor, gamma)
+    rgb[0] = if (red == 0.0) 0.01 else Math.pow(red * factor, gamma)
+    rgb[1] = if (green == 0.0) 0.01 else Math.pow(green * factor, gamma)
+    rgb[2] = if (blue == 0.0) 0.01 else Math.pow(blue * factor, gamma)
 
     return rgb
 }

@@ -7,7 +7,7 @@ import javafx.scene.Scene
 import javafx.stage.Stage
 
 
-fun main(args: Array<String>) {
+fun main() {
     Application.launch(Main::class.java)
 }
 

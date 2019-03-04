@@ -4,7 +4,7 @@ import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sin
 
-@Suppress("NonAsciiCharacters")
+@Suppress("NonAsciiCharacters", "PropertyName", "PrivatePropertyName", "LocalVariableName")
 class FraunhoferDiffraction {
     val π: Double = 3.14159265359
 
@@ -14,6 +14,7 @@ class FraunhoferDiffraction {
             πbByλ = π * b / λ
             πaByλ = π * a / λ
         }
+
     var a: Double = 1.0
         set(value) {
             field = value
@@ -31,16 +32,9 @@ class FraunhoferDiffraction {
     private var πaByλ: Double = 0.0
 
     private fun calcFor(θ: Double): Double {
-        val β = (π * b / λ) * sin(θ)
-        val α = π * a / λ * sin(θ)
-
-        val interf = (sin(N * β / 2) / sin(β / 2)).pow(2)
-        val diff = (sin(α) / α).pow(2)
-        return interf * diff
-        /*val xByD = x / D
-        val πbByλ_xByD = πbByλ * xByD
-        val πaByλ_xByD = πaByλ * xByD
-        return 4 * (sin(πbByλ_xByD) / πbByλ_xByD).pow(2) * ((sin(N * πaByλ_xByD) / (N * sin(πaByλ_xByD)))).pow(2)*/
+        val β = (π * a * sin(θ)) / (λ * D)
+        val γ = (π * b * sin(θ)) / (λ * D)
+        return (sin(β).pow(2) / β.pow(2)) * ((sin(N * γ).pow(2)) / (sin(γ).pow(2)))
     }
 
     fun calcInterval(start: Double, end: Double, resolution: Double): Array<Double> {
@@ -64,5 +58,9 @@ class FraunhoferDiffraction {
             result[i] /= max
         }
         return result
+    }
+
+    override fun toString(): String {
+        return "λ = $λ a = $a b = $b D = $D N = $N"
     }
 }
