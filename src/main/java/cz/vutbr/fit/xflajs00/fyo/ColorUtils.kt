@@ -3,12 +3,19 @@ package cz.vutbr.fit.xflajs00.fyo
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
 
-fun drawIntensity(canvas: Canvas, tmp: Array<Double>, waveLength: Double, scaleFactor: Double = 1.0) {
-    val step = tmp.size / canvas.width
+/**
+ * Draw intensity map on a provided canvas.
+ * @param canvas canvas to draw on
+ * @param intensities intensities in given points
+ * @param waveLength wavelength of light
+ * @param scaleFactor intensity scaling factor
+ */
+fun drawIntensity(canvas: Canvas, intensities: Array<Double>, waveLength: Double, scaleFactor: Double = 1.0) {
+    val step = intensities.size / canvas.width
     var curPos = 0.0
     val rgb = waveLengthToRGB(waveLength)
     for (i in 0 until canvas.width.toInt()) {
-        val intensityColor = getColor(rgb, tmp[curPos.toInt()], scaleFactor)
+        val intensityColor = getColor(rgb, intensities[curPos.toInt()], scaleFactor)
         canvas.graphicsContext2D.fill = intensityColor
         canvas.graphicsContext2D.stroke = intensityColor
         canvas.graphicsContext2D.strokeLine(i.toDouble(), 0.0, i.toDouble(), canvas.height)
@@ -16,6 +23,9 @@ fun drawIntensity(canvas: Canvas, tmp: Array<Double>, waveLength: Double, scaleF
     }
 }
 
+/**
+ * Convert RGB array to Color. Modify it by intensity and scale factor.
+ */
 fun getColor(rgb: DoubleArray, intensity: Double, scaleFactor: Double): Color {
     var red = rgb[0] * intensity * scaleFactor
     if (red > 1.0) {
@@ -32,6 +42,13 @@ fun getColor(rgb: DoubleArray, intensity: Double, scaleFactor: Double): Color {
     return Color(red, green, blue, 1.0)
 }
 
+/**
+ * Convert wavelength to RGB approximation.
+ * When the value is outside the visible spectrum the computed RGB is Color.WHITE
+ *
+ * @param wavelength wavelength of light in meters
+ * @return array of length 3 containing normalised RGB values
+ */
 fun waveLengthToRGB(wavelength: Double): DoubleArray {
     val wlen = wavelength * 1.0e9
     val gamma = 1.0
