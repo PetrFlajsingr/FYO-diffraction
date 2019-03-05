@@ -2,6 +2,7 @@ package cz.vutbr.fit.xflajs00.fyo
 
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
+import javafx.scene.control.ComboBox
 import javafx.scene.control.Slider
 import javafx.scene.control.Spinner
 import javafx.scene.control.TextField
@@ -35,6 +36,8 @@ class Controller {
     private var intensitySlider: Slider? = null
     @FXML
     private var graphCanvas: Canvas? = null
+    @FXML
+    private var diffTypeComboBox: ComboBox<String>? = null
 
 
     @FXML
@@ -84,6 +87,8 @@ class Controller {
 
         graphCanvas?.widthProperty()?.bind(chartPane?.widthProperty())
         graphCanvas?.heightProperty()?.bind(chartPane?.heightProperty())
+
+        diffTypeComboBox?.selectionModel?.select(0)
     }
 
     fun firstShow() {
