@@ -3,6 +3,7 @@ package cz.vutbr.fit.xflajs00.fyo
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.Slider
+import javafx.scene.control.Spinner
 import javafx.scene.control.TextField
 import javafx.scene.layout.Pane
 import org.jfree.chart.ChartFactory
@@ -22,7 +23,7 @@ class Controller {
     @FXML
     private var intensityCanvas: Canvas? = null
     @FXML
-    private var slitCountInput: TextField? = null
+    private var slitCountInput: Spinner<Int>? = null
     @FXML
     private var slitWidthInput: TextField? = null
     @FXML
@@ -47,14 +48,21 @@ class Controller {
         intensityCanvas?.widthProperty()?.bind(intensityPane?.widthProperty())
         intensityCanvas?.heightProperty()?.bind(intensityPane?.heightProperty())
 
+        intensityCanvas?.widthProperty()?.addListener { _ -> test() }
+        intensityCanvas?.heightProperty()?.addListener { _ -> test() }
+
+        slitCountInput?.valueProperty()?.addListener { _ -> test() }
+    }
+
+    fun firstShow() {
         test()
     }
 
-    fun test() {
+    private fun test() {
         val t = FraunhoferDiffraction()
         t.λ = wavelengthSlider!!.value * 1e-9
         t.D = projectDistSlider!!.value
-        t.N = slitCountInput!!.text.toInt()
+        t.N = slitCountInput!!.value
         t.a = slitWidthInput!!.text.toDouble() * 10e-9
         t.b = slitDistInput!!.text.toDouble() * 10e-9
         val first = -t.π / 200
@@ -87,7 +95,7 @@ class Controller {
         val t = FraunhoferDiffraction()
         t.λ = wavelengthSlider!!.value * 1e-9//0.55e-6
         t.D = projectDistSlider!!.value
-        t.N = slitCountInput!!.text.toInt()
+        t.N = slitCountInput!!.value
         t.a = slitWidthInput!!.text.toDouble() * 10e-9
         t.b = slitDistInput!!.text.toDouble() * 10e-9
         val first = -t.π / 200
