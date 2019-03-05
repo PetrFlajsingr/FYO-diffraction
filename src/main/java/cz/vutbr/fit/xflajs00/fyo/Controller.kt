@@ -42,6 +42,7 @@ class Controller {
         wavelengthInput?.textProperty()?.bindBidirectional(wavelengthSlider?.valueProperty(), NumberIntStringConverter())
 
         wavelengthSlider?.valueProperty()?.addListener { _ -> test() }
+        projectDistSlider?.valueProperty()?.addListener { _ -> test() }
 
         intensityCanvas?.widthProperty()?.bind(intensityPane?.widthProperty())
         intensityCanvas?.heightProperty()?.bind(intensityPane?.heightProperty())
@@ -61,7 +62,7 @@ class Controller {
         val step = (second - first) / 10000
         val tmp = t.calcInterval(first, second, step)
 
-        drawIntensity(intensityCanvas!!, tmp, t.λ, 50.0)
+        drawIntensity(intensityCanvas!!, tmp, t.λ, 20.0)
 
         /*val lineChartDataSet = DefaultCategoryDataset()
         var x = first
@@ -91,13 +92,22 @@ class Controller {
         t.b = slitDistInput!!.text.toDouble() * 10e-9
         val first = -t.π / 200
         val second = t.π / 200
-        val step = (second - first) / 2000
+        val step = (second - first) / 10000
         val tmp = t.calcInterval(first, second, step)
+
+        val t2 = FraunhoferDiffraction()
+        t2.λ = wavelengthSlider!!.value * 1e-9
+        t2.D = projectDistSlider!!.value
+        t2.N = 1
+        t2.a = slitWidthInput!!.text.toDouble() * 10e-9
+        t2.b = slitDistInput!!.text.toDouble() * 10e-9
+        val tmp2 = t2.calcInterval(first, second, step)
 
         val lineChartDataSet = DefaultCategoryDataset()
         var x = first
         for (i in 0 until tmp.size) {
             lineChartDataSet.addValue(tmp[i], "val", x)
+            lineChartDataSet.addValue(tmp2[i], "val2", x)
             x += step
         }
         val chart = ChartFactory.createLineChart(

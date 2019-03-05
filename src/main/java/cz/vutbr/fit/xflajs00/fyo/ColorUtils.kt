@@ -4,16 +4,14 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
 
 fun drawIntensity(canvas: Canvas, tmp: Array<Double>, waveLength: Double, scaleFactor: Double = 1.0) {
-    val gc = canvas.graphicsContext2D
-
     val step = tmp.size / canvas.width
     var curPos = 0.0
     val rgb = waveLengthToRGB(waveLength)
     for (i in 0 until canvas.width.toInt()) {
         val intensityColor = getColor(rgb, tmp[curPos.toInt()], scaleFactor)
-        gc.fill = intensityColor
-        gc.stroke = intensityColor
-        gc.strokeLine(i.toDouble(), 0.0, i.toDouble(), canvas.height)
+        canvas.graphicsContext2D.fill = intensityColor
+        canvas.graphicsContext2D.stroke = intensityColor
+        canvas.graphicsContext2D.strokeLine(i.toDouble(), 0.0, i.toDouble(), canvas.height)
         curPos += step
     }
 }
