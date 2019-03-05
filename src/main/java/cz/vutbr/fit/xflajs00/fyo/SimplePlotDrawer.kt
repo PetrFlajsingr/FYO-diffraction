@@ -3,7 +3,10 @@ package cz.vutbr.fit.xflajs00.fyo
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
 
-class SimplePlotDrawer(val canvas: Canvas) {
+/**
+ * Clears canvas and draws provided data on it
+ */
+class SimplePlotDrawer(private val canvas: Canvas) {
     inner class ValueSet(val values: Array<Double>, val color: Color)
     inner class AxisInfo(val value: String, val pos: Double)
 
@@ -11,12 +14,20 @@ class SimplePlotDrawer(val canvas: Canvas) {
     private var xAxisText = mutableListOf<AxisInfo>()
     private var yAxisText = mutableListOf<AxisInfo>()
 
+    private val xAxisInfoHeight = 30.0
+
+    /**
+     * Remove all saved datasets and axis data
+     */
     fun clear() {
         values.clear()
         xAxisText.clear()
         yAxisText.clear()
     }
 
+    /**
+     *  Add row to draw
+     */
     fun addValues(values: Array<Double>, color: Color) {
         this.values.add(ValueSet(values, color))
     }
@@ -29,6 +40,9 @@ class SimplePlotDrawer(val canvas: Canvas) {
         yAxisText.add(AxisInfo(value, pos))
     }
 
+    /**
+     * Clear canvas and draw
+     */
     fun draw() {
         canvas.graphicsContext2D.clearRect(0.0, 0.0, canvas.width, canvas.height)
         drawBackground()
@@ -50,7 +64,7 @@ class SimplePlotDrawer(val canvas: Canvas) {
             canvas.graphicsContext2D.fill = row.color
             canvas.graphicsContext2D.stroke = row.color
 
-            val h = canvas.height
+            val h = canvas.height - xAxisInfoHeight
             for (i in 0 until row.values.size - 1) {
                 canvas.graphicsContext2D.strokeLine(x, h - h * row.values[i], x + step, h - h * row.values[i + 1])
                 x += step
@@ -59,11 +73,18 @@ class SimplePlotDrawer(val canvas: Canvas) {
     }
 
     private fun drawAxisInfo() {
-        if (!xAxisText.isEmpty()) {
-            // draw
-        }
-        if (!yAxisText.isEmpty()) {
-            //draw
+        canvas.graphicsContext2D.fill = Color.BLACK
+        canvas.graphicsContext2D.stroke = Color.BLACK
+        canvas.graphicsContext2D.strokeLine(0.0, canvas.height - xAxisInfoHeight, canvas.width, canvas.height - xAxisInfoHeight)
+        for (info in xAxisText) {
+            val pos = info.pos * canvas.width
+            canvas.graphicsContext2D.fill = Color.BLACK
+            canvas.graphicsContext2D.stroke = Color.BLACK
+            canvas.graphicsContext2D.strokeText(info.value, pos, canvas.height - 10)
+
+            canvas.graphicsContext2D.fill = Color.GRAY
+            canvas.graphicsContext2D.stroke = Color.GRAY
+            canvas.graphicsContext2D.strokeLine(pos, canvas.height - xAxisInfoHeight - 10, pos, canvas.height - xAxisInfoHeight + 10)
         }
     }
 }

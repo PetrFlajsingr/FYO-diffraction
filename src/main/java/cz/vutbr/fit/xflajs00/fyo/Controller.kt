@@ -2,10 +2,7 @@ package cz.vutbr.fit.xflajs00.fyo
 
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
-import javafx.scene.control.ComboBox
-import javafx.scene.control.Slider
-import javafx.scene.control.Spinner
-import javafx.scene.control.TextField
+import javafx.scene.control.*
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.util.converter.NumberStringConverter
@@ -38,6 +35,8 @@ class Controller {
     private var graphCanvas: Canvas? = null
     @FXML
     private var diffTypeComboBox: ComboBox<String>? = null
+    @FXML
+    private var whiteLightCheckbox: CheckBox? = null
 
 
     @FXML
@@ -95,16 +94,62 @@ class Controller {
         test()
     }
 
+    infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
+        require(start.isFinite())
+        require(endInclusive.isFinite())
+        require(step > 0.0) { "Step must be positive, was: $step." }
+        val sequence = generateSequence(start) { previous ->
+            if (previous == Double.POSITIVE_INFINITY) return@generateSequence null
+            val next = previous + step
+            if (next > endInclusive) null else next
+        }
+        return sequence.asIterable()
+    }
+
     private fun test() {
         val t = FraunhoferDiffraction()
+        if (whiteLightCheckbox!!.isSelected) {
+            val vals = mutableListOf<Pair<Double, Array<Double>>>()
+            for (λ in 380.0..750.0 step 5.0) {
+                t.λ = λ * 1e-9
+                t.D = projectDistSlider!!.value
+                t.N = slitCountInput!!.value
+                t.a = slitWidthInput!!.text.toDouble() * 10e-9
+                t.b = slitDistInput!!.text.toDouble() * 10e-9
+                val first = -t.π / 200
+                val second = t.π / 200
+                val step = (second - first) / 1000
+                vals.add(Pair(λ * 1e-9, t.calcInterval(first, second, step)))
+            }
+            drawCombinedIntensity(intensityCanvas!!, vals, intensitySlider!!.value)
+
+            val first = -t.π / 4 // / 200
+            val second = t.π / 4 // / 200
+            val step = (second - first) / 1000
+            val t2 = FraunhoferDiffraction()
+            t2.λ = wavelengthSlider!!.value * 1e-9
+            t2.D = projectDistSlider!!.value
+            t2.N = 1
+            t2.a = slitWidthInput!!.text.toDouble() * 10e-9
+            t2.b = slitDistInput!!.text.toDouble() * 10e-9
+            val tmp2 = t2.calcInterval(first, second, step)
+
+            val d = SimplePlotDrawer(graphCanvas!!)
+            d.addValues(tmp2, Color.BLUE)
+            d.addXAxisText("0°", 0.5)
+            d.draw()
+
+            return
+        }
+
         t.λ = wavelengthSlider!!.value * 1e-9
         t.D = projectDistSlider!!.value
         t.N = slitCountInput!!.value
         t.a = slitWidthInput!!.text.toDouble() * 10e-9
         t.b = slitDistInput!!.text.toDouble() * 10e-9
-        val first = -t.π / 200
-        val second = t.π / 200
-        val step = (second - first) / 10000
+        val first = -t.π / 4 // / 200
+        val second = t.π / 4 // / 200
+        val step = (second - first) / 30000
         val tmp = t.calcInterval(first, second, step)
 
         drawIntensity(intensityCanvas!!, tmp, t.λ, intensitySlider!!.value)
@@ -120,6 +165,7 @@ class Controller {
         val d = SimplePlotDrawer(graphCanvas!!)
         d.addValues(tmp, Color.RED)
         d.addValues(tmp2, Color.BLUE)
+        d.addXAxisText("0°", 0.5)
         d.draw()
     }
 

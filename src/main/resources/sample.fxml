@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import java.lang.String?>
+
 <GridPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="640.0" prefWidth="1200.0"
           xmlns="http://javafx.com/javafx/8.0.172-ea">
      <columnConstraints>
@@ -75,8 +88,7 @@
         <VBox alignment="TOP_CENTER" prefHeight="346.0" prefWidth="155.0">
             <Label text="Intenzita"/>
             <Slider fx:id="intensitySlider" majorTickUnit="10.0" min="1.0" minorTickCount="1" orientation="VERTICAL"
-                    prefHeight="229.0" prefWidth="16.0" showTickLabels="true" showTickMarks="true"
-                    snapToTicks="true"/>
+                    prefHeight="229.0" prefWidth="16.0" showTickLabels="true" showTickMarks="true" snapToTicks="true"/>
         </VBox>
         <Pane fx:id="intensityPane" prefHeight="250.0" prefWidth="897.0">
             <Canvas fx:id="intensityCanvas" height="211.0" width="246.0"/>
@@ -84,10 +96,7 @@
     </HBox>
     <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1"
           GridPane.rowSpan="2">
-        <VBox alignment="TOP_CENTER" prefHeight="294.0" prefWidth="155.0">
-            <CheckBox fx:id="normaliseCheckbox" mnemonicParsing="false" selected="true" text="Normalizovat"
-                      wrapText="true"/>
-        </VBox>
+        <VBox alignment="TOP_CENTER" prefHeight="294.0" prefWidth="155.0"/>
         <Pane fx:id="chartPane" prefHeight="294.0" prefWidth="896.0">
             <Canvas fx:id="graphCanvas" height="200.0" width="200.0"/>
         </Pane>

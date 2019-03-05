@@ -23,10 +23,41 @@ fun drawIntensity(canvas: Canvas, intensities: Array<Double>, waveLength: Double
     }
 }
 
+fun drawCombinedIntensity(canvas: Canvas, intensities: List<Pair<Double, Array<Double>>>, scaleFactor: Double = 1.0) {
+    val resultColors = Array(canvas.width.toInt()) { DoubleArray(3) { 0.0 } }
+    for (intensity in intensities) {
+        val step = intensity.second.size / canvas.width
+        var curPos = 0.0
+        val color = waveLengthToRGB(intensity.first)
+        for (i in 0 until canvas.width.toInt()) {
+            val intensityColor = getColor(color, intensity.second[curPos.toInt()], scaleFactor)
+            resultColors[i][0] += intensityColor.red
+            resultColors[i][1] += intensityColor.green
+            resultColors[i][2] += intensityColor.blue
+            curPos += step
+        }
+    }
+    for (i in 0 until resultColors.size) {
+        if (resultColors[i][0] > 1.0) {
+            resultColors[i][0] = 1.0
+        }
+        if (resultColors[i][1] > 1.0) {
+            resultColors[i][1] = 1.0
+        }
+        if (resultColors[i][2] > 1.0) {
+            resultColors[i][2] = 1.0
+        }
+        val intensityColor = Color(resultColors[i][0], resultColors[i][1], resultColors[i][2], 1.0)
+        canvas.graphicsContext2D.fill = intensityColor
+        canvas.graphicsContext2D.stroke = intensityColor
+        canvas.graphicsContext2D.strokeLine(i.toDouble(), 0.0, i.toDouble(), canvas.height)
+    }
+}
+
 /**
  * Convert RGB array to Color. Modify it by intensity and scale factor.
  */
-fun getColor(rgb: DoubleArray, intensity: Double, scaleFactor: Double): Color {
+fun getColor(rgb: DoubleArray, intensity: Double, scaleFactor: Double = 1.0): Color {
     var red = rgb[0] * intensity * scaleFactor
     if (red > 1.0) {
         red = 1.0
