@@ -6,10 +6,8 @@ import javafx.scene.control.Slider
 import javafx.scene.control.Spinner
 import javafx.scene.control.TextField
 import javafx.scene.layout.Pane
+import javafx.scene.paint.Color
 import javafx.util.converter.NumberStringConverter
-import org.jfree.chart.ChartFactory
-import org.jfree.chart.plot.PlotOrientation
-import org.jfree.data.category.DefaultCategoryDataset
 
 
 class Controller {
@@ -35,6 +33,8 @@ class Controller {
     private var projectDistSlider: Slider? = null
     @FXML
     private var intensitySlider: Slider? = null
+    @FXML
+    private var graphCanvas: Canvas? = null
 
 
     @FXML
@@ -63,6 +63,7 @@ class Controller {
         slitWidthInput?.textProperty()?.addListener { _, oldValue, newValue ->
             if (newValue.toDoubleOrNull() == null) {
                 slitWidthInput?.text = oldValue
+                return@addListener
             }
             if (newValue.toDouble() >= slitDistInput!!.text.toDouble()) {
                 slitWidthInput?.text = oldValue
@@ -71,6 +72,7 @@ class Controller {
         slitDistInput?.textProperty()?.addListener { _, oldValue, newValue ->
             if (newValue.toDoubleOrNull() == null) {
                 slitDistInput?.text = oldValue
+                return@addListener
             }
             if (newValue.toDouble() <= slitWidthInput!!.text.toDouble()) {
                 slitDistInput?.text = oldValue
@@ -79,6 +81,9 @@ class Controller {
         slitWidthInput?.textProperty()?.addListener { _ -> test() }
         slitDistInput?.textProperty()?.addListener { _ -> test() }
         intensitySlider?.valueProperty()?.addListener { _ -> test() }
+
+        graphCanvas?.widthProperty()?.bind(chartPane?.widthProperty())
+        graphCanvas?.heightProperty()?.bind(chartPane?.heightProperty())
     }
 
     fun firstShow() {
@@ -99,37 +104,6 @@ class Controller {
 
         drawIntensity(intensityCanvas!!, tmp, t.λ, intensitySlider!!.value)
 
-        /*val lineChartDataSet = DefaultCategoryDataset()
-        var x = first
-        for (i in 0 until tmp.size) {
-            lineChartDataSet.addValue(tmp[i], "val", x)
-            x += step
-        }
-        val chart = ChartFactory.createLineChart(
-                "Test", "",
-                "",
-                lineChartDataSet, PlotOrientation.VERTICAL,
-                false, false, false)
-
-        val chartCanvas = ChartCanvas(chart)
-        chartPane?.children?.clear()
-        chartPane?.children?.add(chartCanvas)
-        chartCanvas.widthProperty().bind(chartPane?.widthProperty())
-        chartCanvas.heightProperty().bind(chartPane?.heightProperty())*/
-    }
-
-    fun graph() {
-        val t = FraunhoferDiffraction()
-        t.λ = wavelengthSlider!!.value * 1e-9//0.55e-6
-        t.D = projectDistSlider!!.value
-        t.N = slitCountInput!!.value
-        t.a = slitWidthInput!!.text.toDouble() * 10e-9
-        t.b = slitDistInput!!.text.toDouble() * 10e-9
-        val first = -t.π / 200
-        val second = t.π / 200
-        val step = (second - first) / 10000
-        val tmp = t.calcInterval(first, second, step)
-
         val t2 = FraunhoferDiffraction()
         t2.λ = wavelengthSlider!!.value * 1e-9
         t2.D = projectDistSlider!!.value
@@ -138,23 +112,10 @@ class Controller {
         t2.b = slitDistInput!!.text.toDouble() * 10e-9
         val tmp2 = t2.calcInterval(first, second, step)
 
-        val lineChartDataSet = DefaultCategoryDataset()
-        var x = first
-        for (i in 0 until tmp.size) {
-            lineChartDataSet.addValue(tmp[i], "val", x)
-            lineChartDataSet.addValue(tmp2[i], "val2", x)
-            x += step
-        }
-        val chart = ChartFactory.createLineChart(
-                "Test", "",
-                "",
-                lineChartDataSet, PlotOrientation.VERTICAL,
-                false, false, false)
-
-        val chartCanvas = ChartCanvas(chart)
-        chartPane?.children?.clear()
-        chartPane?.children?.add(chartCanvas)
-        chartCanvas.widthProperty().bind(chartPane?.widthProperty())
-        chartCanvas.heightProperty().bind(chartPane?.heightProperty())
+        val d = SimplePlotDrawer(graphCanvas!!)
+        d.addValues(tmp, Color.RED)
+        d.addValues(tmp2, Color.BLUE)
+        d.draw()
     }
+
 }

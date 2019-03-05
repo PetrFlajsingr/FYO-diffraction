@@ -30,6 +30,7 @@ class SimplePlotDrawer(val canvas: Canvas) {
     }
 
     fun draw() {
+        canvas.graphicsContext2D.clearRect(0.0, 0.0, canvas.width, canvas.height)
         drawBackground()
         drawAxisInfo()
         drawValues()
@@ -44,10 +45,16 @@ class SimplePlotDrawer(val canvas: Canvas) {
             return
         }
         for (row in values) {
-            if (row.values.isEmpty()) {
-                continue
+            val step = canvas.width / row.values.size
+            var x = 0.0
+            canvas.graphicsContext2D.fill = row.color
+            canvas.graphicsContext2D.stroke = row.color
+
+            val h = canvas.height
+            for (i in 0 until row.values.size - 1) {
+                canvas.graphicsContext2D.strokeLine(x, h - h * row.values[i], x + step, h - h * row.values[i + 1])
+                x += step
             }
-            // draw
         }
     }
 
