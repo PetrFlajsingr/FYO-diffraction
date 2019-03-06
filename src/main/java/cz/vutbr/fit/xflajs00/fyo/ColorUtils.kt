@@ -2,20 +2,38 @@ package cz.vutbr.fit.xflajs00.fyo
 
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
+import kotlin.math.ceil
+
+class Intensity(val waveLength: Double, val intensities: Array<Double>)
 
 /**
- * Draw intensity map on a provided canvas.
+ * Draw intensities map on a provided canvas.
  * @param canvas canvas to draw on
- * @param intensities intensities in given points
- * @param waveLength wavelength of light
- * @param scaleFactor intensity scaling factor
+ * @param intensity intensities in given points and its color
+ * @param scaleFactor intensities scaling factor
  */
-fun drawIntensity(canvas: Canvas, intensities: Array<Double>, waveLength: Double, scaleFactor: Double = 1.0) {
-    val step = intensities.size / canvas.width
+fun drawIntensity(canvas: Canvas, intensity: Intensity, scaleFactor: Double = 1.0) {
+    val step = intensity.intensities.size / canvas.width
     var curPos = 0.0
-    val rgb = waveLengthToRGB(waveLength)
+    val rgb = waveLengthToRGB(intensity.waveLength, 0.01)
     for (i in 0 until canvas.width.toInt()) {
-        val intensityColor = getColor(rgb, intensities[curPos.toInt()], scaleFactor)
+        val count = ceil(step).toInt()
+        var wIntensity = 0.0
+        val curIntPos = curPos.toInt()
+
+        if (curIntPos + count < intensity.intensities.size) {
+            wIntensity = intensity.intensities.sliceArray(IntRange(curIntPos, curIntPos + count)).max()!!
+        } else {
+            wIntensity = intensity.intensities[curIntPos]
+        }
+        for (i1 in 0..count) {
+            break
+            if (curIntPos + i1 < intensity.intensities.size) {
+                wIntensity += intensity.intensities[curIntPos + i1]
+            }
+        }
+
+        val intensityColor = getColor(rgb, wIntensity, scaleFactor)
         canvas.graphicsContext2D.fill = intensityColor
         canvas.graphicsContext2D.stroke = intensityColor
         canvas.graphicsContext2D.strokeLine(i.toDouble(), 0.0, i.toDouble(), canvas.height)
@@ -23,14 +41,20 @@ fun drawIntensity(canvas: Canvas, intensities: Array<Double>, waveLength: Double
     }
 }
 
-fun drawCombinedIntensity(canvas: Canvas, intensities: List<Pair<Double, Array<Double>>>, scaleFactor: Double = 1.0) {
+/**
+ * Draw intensities map based on provided intensities.
+ * @param canvas canvas to draw on
+ * @param intensities
+ * #param scaleFactor intensities scaling factor
+ */
+fun drawCombinedIntensity(canvas: Canvas, intensities: List<Intensity>, scaleFactor: Double = 1.0) {
     val resultColors = Array(canvas.width.toInt()) { DoubleArray(3) { 0.0 } }
     for (intensity in intensities) {
-        val step = intensity.second.size / canvas.width
+        val step = intensity.intensities.size / canvas.width
         var curPos = 0.0
-        val color = waveLengthToRGB(intensity.first)
+        val color = waveLengthToRGB(intensity.waveLength)
         for (i in 0 until canvas.width.toInt()) {
-            val intensityColor = getColor(color, intensity.second[curPos.toInt()], scaleFactor)
+            val intensityColor = getColor(color, intensity.intensities[curPos.toInt()], scaleFactor)
             resultColors[i][0] += intensityColor.red
             resultColors[i][1] += intensityColor.green
             resultColors[i][2] += intensityColor.blue
@@ -55,7 +79,7 @@ fun drawCombinedIntensity(canvas: Canvas, intensities: List<Pair<Double, Array<D
 }
 
 /**
- * Convert RGB array to Color. Modify it by intensity and scale factor.
+ * Convert RGB array to Color. Modify it by intensities and scale factor.
  */
 fun getColor(rgb: DoubleArray, intensity: Double, scaleFactor: Double = 1.0): Color {
     var red = rgb[0] * intensity * scaleFactor
@@ -80,15 +104,15 @@ fun getColor(rgb: DoubleArray, intensity: Double, scaleFactor: Double = 1.0): Co
  * @param wavelength wavelength of light in meters
  * @return array of length 3 containing normalised RGB values
  */
-fun waveLengthToRGB(wavelength: Double): DoubleArray {
+fun waveLengthToRGB(wavelength: Double, defVal: Double = 0.0): DoubleArray {
     val wlen = wavelength * 1.0e9
     val gamma = 1.0
     val factor: Double
-    val red: Double
-    val green: Double
-    val blue: Double
+    var red = 1.0
+    var green = 1.0
+    var blue = 1.0
 
-    if (wlen >= 380 && wlen < 440) {
+    if (wlen < 440) {
         red = -(wlen - 440) / (440 - 380)
         green = 0.0
         blue = 1.0
@@ -108,14 +132,10 @@ fun waveLengthToRGB(wavelength: Double): DoubleArray {
         red = 1.0
         green = -(wlen - 645) / (645 - 580)
         blue = 0.0
-    } else if (wlen >= 645 && wlen < 781) {
+    } else if (wlen >= 645) {
         red = 1.0
         green = 0.0
         blue = 0.0
-    } else {
-        red = 1.0
-        green = 1.0
-        blue = 1.0
     }
 
     factor = if (wlen >= 380 && wlen < 420) {
@@ -129,9 +149,9 @@ fun waveLengthToRGB(wavelength: Double): DoubleArray {
     }
 
     val rgb = DoubleArray(3)
-    rgb[0] = if (red == 0.0) 0.01 else Math.pow(red * factor, gamma)
-    rgb[1] = if (green == 0.0) 0.01 else Math.pow(green * factor, gamma)
-    rgb[2] = if (blue == 0.0) 0.01 else Math.pow(blue * factor, gamma)
+    rgb[0] = if (red == 0.0) defVal else Math.pow(red * factor, gamma)
+    rgb[1] = if (green == 0.0) defVal else Math.pow(green * factor, gamma)
+    rgb[2] = if (blue == 0.0) defVal else Math.pow(blue * factor, gamma)
 
     return rgb
 }

@@ -6,6 +6,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.util.converter.NumberStringConverter
+import kotlin.math.PI
 
 
 class Controller {
@@ -38,6 +39,8 @@ class Controller {
     @FXML
     private var whiteLightCheckbox: CheckBox? = null
 
+    private val fraunhoferDiffraction = FraunhoferDiffraction()
+
 
     @FXML
     fun initialize() {
@@ -49,18 +52,18 @@ class Controller {
         }
         wavelengthInput?.textProperty()?.bindBidirectional(wavelengthSlider?.valueProperty(), NumberIntStringConverter())
 
-        wavelengthSlider?.valueProperty()?.addListener { _ -> test() }
+        wavelengthSlider?.valueProperty()?.addListener { _ -> drawDiffraction() }
 
         projectDistInput?.textProperty()?.bindBidirectional(projectDistSlider?.valueProperty(), NumberStringConverter())
-        projectDistSlider?.valueProperty()?.addListener { _ -> test() }
+        projectDistSlider?.valueProperty()?.addListener { _ -> drawDiffraction() }
 
         intensityCanvas?.widthProperty()?.bind(intensityPane?.widthProperty())
         intensityCanvas?.heightProperty()?.bind(intensityPane?.heightProperty())
 
-        intensityCanvas?.widthProperty()?.addListener { _ -> test() }
-        intensityCanvas?.heightProperty()?.addListener { _ -> test() }
+        intensityCanvas?.widthProperty()?.addListener { _ -> drawDiffraction() }
+        intensityCanvas?.heightProperty()?.addListener { _ -> drawDiffraction() }
 
-        slitCountInput?.valueProperty()?.addListener { _ -> test() }
+        slitCountInput?.valueProperty()?.addListener { _ -> drawDiffraction() }
 
         slitWidthInput?.textProperty()?.addListener { _, oldValue, newValue ->
             if (newValue.toDoubleOrNull() == null) {
@@ -80,9 +83,9 @@ class Controller {
                 slitDistInput?.text = oldValue
             }
         }
-        slitWidthInput?.textProperty()?.addListener { _ -> test() }
-        slitDistInput?.textProperty()?.addListener { _ -> test() }
-        intensitySlider?.valueProperty()?.addListener { _ -> test() }
+        slitWidthInput?.textProperty()?.addListener { _ -> drawDiffraction() }
+        slitDistInput?.textProperty()?.addListener { _ -> drawDiffraction() }
+        intensitySlider?.valueProperty()?.addListener { _ -> drawDiffraction() }
 
         graphCanvas?.widthProperty()?.bind(chartPane?.widthProperty())
         graphCanvas?.heightProperty()?.bind(chartPane?.heightProperty())
@@ -91,10 +94,10 @@ class Controller {
     }
 
     fun firstShow() {
-        test()
+        drawDiffraction()
     }
 
-    infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
+    private infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
         require(start.isFinite())
         require(endInclusive.isFinite())
         require(step > 0.0) { "Step must be positive, was: $step." }
@@ -106,53 +109,55 @@ class Controller {
         return sequence.asIterable()
     }
 
-    private fun test() {
-        val t = FraunhoferDiffraction()
+    private fun drawCombinedDiffraction() {
+        val vals = mutableListOf<Intensity>()
+        for (λ in 380.0..750.0 step 5.0) {
+            fraunhoferDiffraction.λ = λ * 1e-9
+            fraunhoferDiffraction.D = projectDistSlider!!.value
+            fraunhoferDiffraction.N = slitCountInput!!.value
+            fraunhoferDiffraction.a = slitWidthInput!!.text.toDouble() * 10e-9
+            fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
+            val first = -PI / 4
+            val second = PI / 4
+            val step = (second - first) / 7500
+            vals.add(Intensity(λ * 1e-9, fraunhoferDiffraction.calcInterval(first, second, step)))
+        }
+        drawCombinedIntensity(intensityCanvas!!, vals, intensitySlider!!.value)
+
+        val first = -PI / 4 // / 200
+        val second = PI / 4 // / 200
+        val step = (second - first) / 30000
+        val t2 = FraunhoferDiffraction()
+        t2.λ = wavelengthSlider!!.value * 1e-9
+        t2.D = projectDistSlider!!.value
+        t2.N = 1
+        t2.a = slitWidthInput!!.text.toDouble() * 10e-9
+        t2.b = slitDistInput!!.text.toDouble() * 10e-9
+        val tmp2 = t2.calcInterval(first, second, step)
+
+        val d = SimplePlotDrawer(graphCanvas!!)
+        d.addValues(tmp2, Color.BLUE)
+        d.addXAxisText("0°", 0.5)
+        d.draw()
+    }
+
+    private fun drawDiffraction() {
         if (whiteLightCheckbox!!.isSelected) {
-            val vals = mutableListOf<Pair<Double, Array<Double>>>()
-            for (λ in 380.0..750.0 step 5.0) {
-                t.λ = λ * 1e-9
-                t.D = projectDistSlider!!.value
-                t.N = slitCountInput!!.value
-                t.a = slitWidthInput!!.text.toDouble() * 10e-9
-                t.b = slitDistInput!!.text.toDouble() * 10e-9
-                val first = -t.π / 200
-                val second = t.π / 200
-                val step = (second - first) / 1000
-                vals.add(Pair(λ * 1e-9, t.calcInterval(first, second, step)))
-            }
-            drawCombinedIntensity(intensityCanvas!!, vals, intensitySlider!!.value)
-
-            val first = -t.π / 4 // / 200
-            val second = t.π / 4 // / 200
-            val step = (second - first) / 1000
-            val t2 = FraunhoferDiffraction()
-            t2.λ = wavelengthSlider!!.value * 1e-9
-            t2.D = projectDistSlider!!.value
-            t2.N = 1
-            t2.a = slitWidthInput!!.text.toDouble() * 10e-9
-            t2.b = slitDistInput!!.text.toDouble() * 10e-9
-            val tmp2 = t2.calcInterval(first, second, step)
-
-            val d = SimplePlotDrawer(graphCanvas!!)
-            d.addValues(tmp2, Color.BLUE)
-            d.addXAxisText("0°", 0.5)
-            d.draw()
-
+            drawCombinedDiffraction()
             return
         }
 
-        t.λ = wavelengthSlider!!.value * 1e-9
-        t.D = projectDistSlider!!.value
-        t.N = slitCountInput!!.value
-        t.a = slitWidthInput!!.text.toDouble() * 10e-9
-        t.b = slitDistInput!!.text.toDouble() * 10e-9
-        val first = -t.π / 4 // / 200
-        val second = t.π / 4 // / 200
+        fraunhoferDiffraction.λ = wavelengthSlider!!.value * 1e-9
+        fraunhoferDiffraction.D = projectDistSlider!!.value
+        fraunhoferDiffraction.N = slitCountInput!!.value
+        fraunhoferDiffraction.a = slitWidthInput!!.text.toDouble() * 10e-9
+        fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
+        val first = -PI / 4 // / 200
+        val second = PI / 4 // / 200
         val step = (second - first) / 30000
-        val tmp = t.calcInterval(first, second, step)
+        val tmp = fraunhoferDiffraction.calcInterval(first, second, step)
 
-        drawIntensity(intensityCanvas!!, tmp, t.λ, intensitySlider!!.value)
+        drawIntensity(intensityCanvas!!, Intensity(fraunhoferDiffraction.λ, tmp), intensitySlider!!.value)
 
         val t2 = FraunhoferDiffraction()
         t2.λ = wavelengthSlider!!.value * 1e-9

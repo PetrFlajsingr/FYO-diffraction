@@ -6,6 +6,10 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.stage.Stage
 
+// TODO custom color config
+// angles in graph
+// translate to english
+//
 
 fun main() {
     Application.launch(Main::class.java)
@@ -19,7 +23,7 @@ class Main : javafx.application.Application() {
             println(i)
         }
         val loader = FXMLLoader()
-        loader.location = javaClass.classLoader.getResource("sample.fxml")
+        loader.location = javaClass.classLoader.getResource("main_window.fxml")
         val controller = Controller()
         loader.setController(controller)
         val root = loader.load<Parent>()

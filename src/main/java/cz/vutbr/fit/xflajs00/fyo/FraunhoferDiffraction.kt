@@ -1,5 +1,6 @@
 package cz.vutbr.fit.xflajs00.fyo
 
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sin
@@ -9,7 +10,7 @@ import kotlin.math.sin
  * Calculation of Fraunhofer Diffraction in far field
  */
 class FraunhoferDiffraction {
-    val π = 3.14159265359
+    val π = PI
     /**
      * Wavelength
      */
@@ -52,9 +53,9 @@ class FraunhoferDiffraction {
     private var λD = 0.0
 
     /**
-     * Calculate intensity for angle θ
+     * Calculate intensities for angle θ
      * @param θ angle on projection plane
-     * @return wave intensity in given position
+     * @return wave intensities in given position
      */
     private fun calcFor(θ: Double): Double {
         val sinθ = sin(θ)
@@ -64,9 +65,9 @@ class FraunhoferDiffraction {
     }
 
     /**
-     * Calculate intensity over given area.
+     * Calculate intensities over given area.
      * Computes only the first half of the area and mirrors it on the other side - function is symmetrical.
-     * Normalises values by maximum intensity
+     * Normalises values by maximum intensities
      * @param start left-most value
      * @param end right-most value
      * @param resolution step of calculation
@@ -86,7 +87,7 @@ class FraunhoferDiffraction {
         for (i in result.size / 2 until result.size ) {
             result[i] = reversed[i - result.size / 2]
         }
-        //  normalise using maximum intensity
+        //  normalise using maximum intensities
         val max = result.max()
         for (i in 0 until result.size) {
             result[i] /= max!!
