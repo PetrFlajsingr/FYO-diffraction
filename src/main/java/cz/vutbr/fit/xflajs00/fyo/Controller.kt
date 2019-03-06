@@ -1,10 +1,14 @@
 package cz.vutbr.fit.xflajs00.fyo
 
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
+import javafx.scene.Parent
+import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.*
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.stage.Stage
 import javafx.util.converter.NumberStringConverter
 import kotlin.math.PI
 
@@ -91,6 +95,16 @@ class Controller {
         graphCanvas?.heightProperty()?.bind(chartPane?.heightProperty())
 
         diffTypeComboBox?.selectionModel?.select(0)
+
+        val loader = FXMLLoader()
+        loader.location = javaClass.classLoader.getResource("settings.fxml")
+        val root = loader.load<Parent>()
+        val stage = Stage()
+        stage.title = "Settings"
+        stage.scene = Scene(root)
+        stage.setOnCloseRequest { loader.getController<SettingsController>().onClose() }
+        stage.isResizable = false
+        stage.show()
     }
 
     fun firstShow() {
