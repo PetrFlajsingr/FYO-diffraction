@@ -8,6 +8,7 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.control.*
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.util.converter.NumberStringConverter
 import kotlin.math.PI
@@ -102,9 +103,11 @@ class Controller {
         val stage = Stage()
         stage.title = "Settings"
         stage.scene = Scene(root)
+        stage.scene.stylesheets.add(javaClass.classLoader.getResource("style.css").toString())
         stage.setOnCloseRequest { loader.getController<SettingsController>().onClose() }
         stage.isResizable = false
-        stage.show()
+        stage.initModality(Modality.APPLICATION_MODAL)
+        stage.showAndWait()
     }
 
     fun firstShow() {

@@ -1,10 +1,9 @@
 package cz.vutbr.fit.xflajs00.fyo
 
+import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
-import javafx.scene.control.Alert
+import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
-import javafx.scene.control.TableColumn
-import javafx.scene.control.TableView
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.control.cell.TextFieldTableCell
 
@@ -12,11 +11,13 @@ import javafx.scene.control.cell.TextFieldTableCell
 class SettingsController {
     @FXML
     private var configTable: TableView<ConfigModel>? = null
+    @FXML
+    private var combWaveLengthList: ListView<String>? = null
+    @FXML
+    private var memo: TextArea? = null
 
-    // TODO: create config
-    // TODO: first config init
-    // TODO: save config
-    // TODO: list of wavelengths
+    var lightSources = mutableListOf<LightSourceModel>()
+
     @FXML
     fun initialize() {
         configTable?.isEditable = true
@@ -28,18 +29,35 @@ class SettingsController {
             model.setValue(evt.newValue)
         }
         valueColumn.cellValueFactory = PropertyValueFactory<ConfigModel, String>("value")
-        valueColumn.prefWidth = configTable!!.prefWidth / 2
+        valueColumn.prefWidth = configTable!!.prefWidth / 2 - 1
         valueColumn.isEditable = true
 
         val keyColumn = TableColumn<ConfigModel, String>("Key")
         keyColumn.cellValueFactory = PropertyValueFactory<ConfigModel, String>("key")
-        keyColumn.prefWidth = configTable!!.prefWidth / 2
+        keyColumn.prefWidth = configTable!!.prefWidth / 2 - 1
 
         configTable?.columns?.addAll(keyColumn, valueColumn)
 
-        for (prop in ConfigModel.fromConfig()) {
+        for (prop in ConfigModel.loadFromConfig()) {
             configTable?.items?.add(prop)
         }
+
+        lightSources = LightSourceModel.loadFromConfig().toMutableList()
+
+        val l = mutableListOf<LightSourceModel>()
+        l.add(LightSourceModel.fromString("test:420,440,650"))
+
+        combWaveLengthList?.items?.add(l[0].name)
+
+        combWaveLengthList?.selectionModel?.selectionMode = SelectionMode.SINGLE
+        combWaveLengthList?.selectionModel?.selectedIndices?.addListener(ListChangeListener {
+            val index = combWaveLengthList!!.selectionModel!!.selectedIndex
+            memo?.text = lightSources[index].memoString()
+        })
+
+        combWaveLengthList!!.selectionModel!!.select(0)
+
+        memo?.textProperty()?.addListener { _, _, _ -> memo?.styleClass?.add("error"); }
     }
 
     fun onClose() {
@@ -51,5 +69,16 @@ class SettingsController {
         ConfigModel.saveToConfig(configTable!!.items)
 
         alert.showAndWait()
+    }
+
+    fun addLightSource() {
+        lightSources.add(LightSourceModel("New light source"))
+        combWaveLengthList?.items?.add(lightSources.last().name)
+    }
+
+    fun removeLightSource() {
+        val index = combWaveLengthList!!.selectionModel!!.selectedIndex
+        lightSources.removeAt(index)
+        combWaveLengthList!!.items!!.removeAt(index)
     }
 }
