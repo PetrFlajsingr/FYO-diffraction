@@ -76,7 +76,7 @@ class Controller {
                 return@addListener
             }
             if (newValue.toDouble() >= slitDistInput!!.text.toDouble()) {
-                slitWidthInput?.text = oldValue
+                slitDistInput?.text = (newValue.toDouble() + 1).toString()
             }
         }
         slitDistInput?.textProperty()?.addListener { _, oldValue, newValue ->
@@ -85,7 +85,7 @@ class Controller {
                 return@addListener
             }
             if (newValue.toDouble() <= slitWidthInput!!.text.toDouble()) {
-                slitDistInput?.text = oldValue
+                slitWidthInput?.text = (newValue.toDouble() - 1).toString()
             }
         }
         slitWidthInput?.textProperty()?.addListener { _ -> drawDiffraction() }
@@ -96,7 +96,9 @@ class Controller {
         graphCanvas?.heightProperty()?.bind(chartPane?.heightProperty())
 
         diffTypeComboBox?.selectionModel?.select(0)
+    }
 
+    fun openSettings() {
         val loader = FXMLLoader()
         loader.location = javaClass.classLoader.getResource("settings.fxml")
         val root = loader.load<Parent>()

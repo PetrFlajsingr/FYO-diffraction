@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.collections.FXCollections?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
@@ -33,14 +31,15 @@
          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
      </rowConstraints>
     <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowSpan="3">
-      <Label text="Konfigurace">
+        <Button mnemonicParsing="false" onAction="#openSettings" prefHeight="27.0" prefWidth="288.0" text="Settings"/>
+        <Label text="Configuration">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Label>
       <Separator prefWidth="200.0" />
-        <CheckBox fx:id="whiteLightCheckbox" mnemonicParsing="false" text="Bílé světlo"/>
-        <Label text="Vlnová délka:" />
+        <CheckBox fx:id="whiteLightCheckbox" mnemonicParsing="false" text="White light"/>
+        <Label text="Wavelength:"/>
         <Slider fx:id="wavelengthSlider" blockIncrement="1.0" majorTickUnit="250.0" max="1001.0" minorTickCount="5"
                 showTickLabels="true" showTickMarks="true" value="500.0"/>
         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="240.0">
@@ -48,25 +47,29 @@
             <Label text="nm" />
         </HBox>
       <Separator prefWidth="200.0" />
-      <Label text="Počet štěrbin" />
-        <Spinner fx:id="slitCountInput" editable="true">
-            <valueFactory>
-                <SpinnerValueFactory.IntegerSpinnerValueFactory max="1000" min="1"/>
-            </valueFactory>
-        </Spinner>
+        <VBox alignment="CENTER" prefHeight="55.0">
+            <children>
+                <Label text="Slit count"/>
+                <Spinner fx:id="slitCountInput" editable="true">
+                    <valueFactory>
+                        <SpinnerValueFactory.IntegerSpinnerValueFactory max="1000" min="1"/>
+                    </valueFactory>
+                </Spinner>
+            </children>
+        </VBox>
       <Separator prefWidth="200.0" />
-      <Label text="Šířka štěrbin" />
+        <Label text="Slit width"/>
         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
             <TextField fx:id="slitWidthInput" text="5000"/>
             <Label text="nm" />
         </HBox>
-      <Label text="Vzdálenost štěrbin" />
+        <Label text="Slit distance"/>
         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
             <TextField fx:id="slitDistInput" text="25000"/>
             <Label text="nm" />
         </HBox>
       <Separator prefWidth="200.0" />
-      <Label text="Projekční vzdálenost" />
+        <Label text="Shade distance"/>
         <Slider fx:id="projectDistSlider" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="1"
                 showTickLabels="true" showTickMarks="true" value="1.0"/>
         <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
@@ -74,19 +77,11 @@
             <Label text="m"/>
         </HBox>
       <Separator prefWidth="200.0" />
-        <ComboBox fx:id="diffTypeComboBox" prefHeight="27.0" prefWidth="204.0">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Fraunhoferova difrakce"/>
-                    <String fx:value="Fresnelova difrakce"/>
-                </FXCollections>
-            </items>
-        </ComboBox>
     </VBox>
    <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowSpan="3" />
     <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2">
         <VBox alignment="TOP_CENTER" prefHeight="346.0" prefWidth="155.0">
-            <Label text="Intenzita"/>
+            <Label text="Intensity"/>
             <Slider fx:id="intensitySlider" majorTickUnit="10.0" min="1.0" minorTickCount="1" orientation="VERTICAL"
                     prefHeight="229.0" prefWidth="16.0" showTickLabels="true" showTickMarks="true" snapToTicks="true"/>
         </VBox>

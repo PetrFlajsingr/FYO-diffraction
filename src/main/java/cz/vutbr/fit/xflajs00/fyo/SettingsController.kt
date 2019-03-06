@@ -44,10 +44,9 @@ class SettingsController {
 
         lightSources = LightSourceModel.loadFromConfig().toMutableList()
 
-        val l = mutableListOf<LightSourceModel>()
-        l.add(LightSourceModel.fromString("test:420,440,650"))
-
-        combWaveLengthList?.items?.add(l[0].name)
+        for (lightSource in lightSources) {
+            combWaveLengthList?.items?.add(lightSource.name)
+        }
 
         combWaveLengthList?.selectionModel?.selectionMode = SelectionMode.SINGLE
         combWaveLengthList?.selectionModel?.selectedIndices?.addListener(ListChangeListener {
