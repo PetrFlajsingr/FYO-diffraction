@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="158.0" prefWidth="253.0"
+          xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="ResolutionChoiceController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="53.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="105.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="91.0" minHeight="10.0" prefHeight="48.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <Label text="Choose resolution and file type"/>
+    <HBox alignment="CENTER" prefHeight="54.0" prefWidth="253.0" GridPane.rowIndex="1">
+        <TextField prefHeight="27.0" prefWidth="115.0"/>
+        <Label text="x"/>
+        <TextField prefHeight="27.0" prefWidth="115.0"/>
+        <Label text="px"/>
+    </HBox>
+    <ChoiceBox prefHeight="27.0" prefWidth="240.0" value="png" GridPane.rowIndex="2">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="png"/>
+                <String fx:value="jpg"/>
+                <String fx:value="bmp"/>
+            </FXCollections>
+        </items>
+    </ChoiceBox>
+    <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="3">
+        <buttons>
+            <Button mnemonicParsing="false" text="OK"/>
+            <Button mnemonicParsing="false" text="Cancel"/>
+        </buttons>
+    </ButtonBar>
+</GridPane>

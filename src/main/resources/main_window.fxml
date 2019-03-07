@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -17,83 +20,95 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="640.0" prefWidth="1200.0"
-          xmlns="http://javafx.com/javafx/8.0.172-ea">
-     <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
-         <ColumnConstraints hgrow="SOMETIMES" maxWidth="6.0" minWidth="6.0" prefWidth="6.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-     </columnConstraints>
-     <rowConstraints>
-         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-     </rowConstraints>
-    <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowSpan="3">
-        <Button mnemonicParsing="false" onAction="#openSettings" prefHeight="27.0" prefWidth="288.0" text="Settings"/>
-        <Label text="Configuration">
-         <font>
-            <Font name="System Bold" size="15.0" />
-         </font>
-      </Label>
-      <Separator prefWidth="200.0" />
-        <CheckBox fx:id="whiteLightCheckbox" mnemonicParsing="false" text="White light"/>
-        <Label text="Wavelength:"/>
-        <Slider fx:id="wavelengthSlider" blockIncrement="1.0" majorTickUnit="250.0" max="1001.0" minorTickCount="5"
-                showTickLabels="true" showTickMarks="true" value="500.0"/>
-        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="240.0">
-            <TextField fx:id="wavelengthInput" text="500"/>
-            <Label text="nm" />
-        </HBox>
-      <Separator prefWidth="200.0" />
-        <VBox alignment="CENTER" prefHeight="55.0">
-            <children>
-                <Label text="Slit count"/>
-                <Spinner fx:id="slitCountInput" editable="true">
-                    <valueFactory>
-                        <SpinnerValueFactory.IntegerSpinnerValueFactory max="1000" min="1"/>
-                    </valueFactory>
-                </Spinner>
-            </children>
-        </VBox>
-      <Separator prefWidth="200.0" />
-        <Label text="Slit width"/>
-        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
-            <TextField fx:id="slitWidthInput" text="5000"/>
-            <Label text="nm" />
-        </HBox>
-        <Label text="Slit distance"/>
-        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
-            <TextField fx:id="slitDistInput" text="25000"/>
-            <Label text="nm" />
-        </HBox>
-      <Separator prefWidth="200.0" />
-        <Label text="Shade distance"/>
-        <Slider fx:id="projectDistSlider" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="1"
-                showTickLabels="true" showTickMarks="true" value="1.0"/>
-        <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
-            <TextField fx:id="projectDistInput" text="1"/>
-            <Label text="m"/>
-        </HBox>
-      <Separator prefWidth="200.0" />
-    </VBox>
-   <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowSpan="3" />
-    <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2">
-        <VBox alignment="TOP_CENTER" prefHeight="346.0" prefWidth="155.0">
-            <Label text="Intensity"/>
-            <Slider fx:id="intensitySlider" majorTickUnit="10.0" min="1.0" minorTickCount="1" orientation="VERTICAL"
-                    prefHeight="229.0" prefWidth="16.0" showTickLabels="true" showTickMarks="true" snapToTicks="true"/>
-        </VBox>
-        <Pane fx:id="intensityPane" prefHeight="250.0" prefWidth="897.0">
-            <Canvas fx:id="intensityCanvas" height="211.0" width="246.0"/>
-        </Pane>
-    </HBox>
-    <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1"
-          GridPane.rowSpan="2">
-        <VBox alignment="TOP_CENTER" prefHeight="294.0" prefWidth="155.0"/>
-        <Pane fx:id="chartPane" prefHeight="294.0" prefWidth="896.0">
-            <Canvas fx:id="graphCanvas" height="200.0" width="200.0"/>
-        </Pane>
-    </HBox>
- </GridPane>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea">
+    <center>
+        <GridPane prefHeight="640.0" prefWidth="1200.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="6.0" minWidth="6.0" prefWidth="6.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowSpan="3">
+                <Label text="Configuration">
+                    <font>
+                        <Font name="System Bold" size="15.0"/>
+                    </font>
+                </Label>
+                <Separator prefWidth="200.0"/>
+                <ChoiceBox prefWidth="150.0"/>
+                <Label text="Wavelength:"/>
+                <Slider fx:id="wavelengthSlider" blockIncrement="1.0" majorTickUnit="250.0" max="1001.0"
+                        minorTickCount="5" showTickLabels="true" showTickMarks="true" value="500.0"/>
+                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="240.0">
+                    <TextField fx:id="wavelengthInput" text="500"/>
+                    <Label text="nm"/>
+                </HBox>
+                <Separator prefWidth="200.0"/>
+                <VBox alignment="CENTER" prefHeight="55.0">
+                    <Label text="Slit count"/>
+                    <Spinner fx:id="slitCountInput" editable="true">
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory max="1000" min="1"/>
+                        </valueFactory>
+                    </Spinner>
+                </VBox>
+                <Separator prefWidth="200.0"/>
+                <Label text="Slit width"/>
+                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
+                    <TextField fx:id="slitWidthInput" text="5000"/>
+                    <Label text="nm"/>
+                </HBox>
+                <Label text="Slit distance"/>
+                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
+                    <TextField fx:id="slitDistInput" text="25000"/>
+                    <Label text="nm"/>
+                </HBox>
+                <Separator prefWidth="200.0"/>
+                <Label text="Shade distance"/>
+                <Slider fx:id="projectDistSlider" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="1"
+                        showTickLabels="true" showTickMarks="true" value="1.0"/>
+                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="200.0">
+                    <TextField fx:id="projectDistInput" text="1"/>
+                    <Label text="m"/>
+                </HBox>
+                <Separator prefWidth="200.0"/>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowSpan="3"/>
+            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2">
+                <VBox alignment="TOP_CENTER" prefHeight="346.0" prefWidth="155.0">
+                    <Label text="Intensity"/>
+                    <Slider fx:id="intensitySlider" majorTickUnit="10.0" min="1.0" minorTickCount="1"
+                            orientation="VERTICAL" prefHeight="229.0" prefWidth="16.0" showTickLabels="true"
+                            showTickMarks="true" snapToTicks="true"/>
+                </VBox>
+                <Pane fx:id="intensityPane" prefHeight="250.0" prefWidth="897.0">
+                    <Canvas fx:id="intensityCanvas" height="211.0" width="246.0"/>
+                </Pane>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2"
+                  GridPane.rowIndex="1" GridPane.rowSpan="2">
+                <VBox alignment="TOP_CENTER" prefHeight="294.0" prefWidth="155.0"/>
+                <Pane fx:id="chartPane" prefHeight="294.0" prefWidth="896.0">
+                    <Canvas fx:id="graphCanvas" height="200.0" width="200.0"/>
+                </Pane>
+            </HBox>
+        </GridPane>
+    </center>
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <Menu mnemonicParsing="false" text="Save">
+                <MenuItem mnemonicParsing="false" text="Save diffraction pattern"/>
+                <MenuItem mnemonicParsing="false" text="Save graph"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Settings">
+                <MenuItem mnemonicParsing="false" onAction="#openSettings" text="Settings"/>
+            </Menu>
+        </MenuBar>
+    </top>
+</BorderPane>

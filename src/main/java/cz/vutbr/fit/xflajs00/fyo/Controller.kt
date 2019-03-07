@@ -5,7 +5,10 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
-import javafx.scene.control.*
+import javafx.scene.control.ComboBox
+import javafx.scene.control.Slider
+import javafx.scene.control.Spinner
+import javafx.scene.control.TextField
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.stage.Modality
@@ -41,8 +44,6 @@ class Controller {
     private var graphCanvas: Canvas? = null
     @FXML
     private var diffTypeComboBox: ComboBox<String>? = null
-    @FXML
-    private var whiteLightCheckbox: CheckBox? = null
 
     private val fraunhoferDiffraction = FraunhoferDiffraction()
 
@@ -161,10 +162,10 @@ class Controller {
     }
 
     private fun drawDiffraction() {
-        if (whiteLightCheckbox!!.isSelected) {
+        /*if (whiteLightCheckbox!!.isSelected) {
             drawCombinedDiffraction()
             return
-        }
+        }*/
 
         fraunhoferDiffraction.λ = wavelengthSlider!!.value * 1e-9
         fraunhoferDiffraction.D = projectDistSlider!!.value
