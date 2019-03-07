@@ -1,4 +1,4 @@
-package cz.vutbr.fit.xflajs00.fyo
+package cz.vutbr.fit.xflajs00.fyo.models
 
 import javafx.beans.property.SimpleStringProperty
 import java.io.File
@@ -73,7 +73,7 @@ class LightSourceModel(val name: String, wavelengths: List<String> = emptyList()
             prop.load(file)
             val result = mutableListOf<LightSourceModel>()
             for (property in prop) {
-                result.add(LightSourceModel.fromString(property.key.toString() + ":" + property.value.toString()))
+                result.add(fromString(property.key.toString() + ":" + property.value.toString()))
             }
             return result
         }

@@ -1,4 +1,4 @@
-package cz.vutbr.fit.xflajs00.fyo
+package cz.vutbr.fit.xflajs00.fyo.drawing
 
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color

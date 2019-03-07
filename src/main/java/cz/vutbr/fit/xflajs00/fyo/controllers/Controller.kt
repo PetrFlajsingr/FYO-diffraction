@@ -1,5 +1,10 @@
-package cz.vutbr.fit.xflajs00.fyo
+package cz.vutbr.fit.xflajs00.fyo.controllers
 
+import cz.vutbr.fit.xflajs00.fyo.*
+import cz.vutbr.fit.xflajs00.fyo.drawing.Intensity
+import cz.vutbr.fit.xflajs00.fyo.drawing.SimplePlotDrawer
+import cz.vutbr.fit.xflajs00.fyo.drawing.drawCombinedIntensity
+import cz.vutbr.fit.xflajs00.fyo.drawing.drawIntensity
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent

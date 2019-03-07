@@ -1,5 +1,7 @@
-package cz.vutbr.fit.xflajs00.fyo
+package cz.vutbr.fit.xflajs00.fyo.controllers
 
+import cz.vutbr.fit.xflajs00.fyo.models.ConfigModel
+import cz.vutbr.fit.xflajs00.fyo.models.LightSourceModel
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.control.*

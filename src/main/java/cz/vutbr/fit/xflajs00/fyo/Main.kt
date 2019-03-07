@@ -1,5 +1,6 @@
 package cz.vutbr.fit.xflajs00.fyo
 
+import cz.vutbr.fit.xflajs00.fyo.controllers.Controller
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
