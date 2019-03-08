@@ -2,6 +2,7 @@ package cz.vutbr.fit.xflajs00.fyo.controllers
 
 import cz.vutbr.fit.xflajs00.fyo.drawing.Intensity
 import cz.vutbr.fit.xflajs00.fyo.drawing.SimplePlotDrawer
+import cz.vutbr.fit.xflajs00.fyo.drawing.drawCombinedIntensity
 import cz.vutbr.fit.xflajs00.fyo.drawing.drawIntensity
 import javafx.embed.swing.SwingFXUtils
 import javafx.fxml.FXML
@@ -15,7 +16,7 @@ import java.io.IOException
 import javax.imageio.ImageIO
 
 
-class ResolutionChoiceController(private val pattern: Boolean, private val scale: Double) {
+class ResolutionChoiceController(private val pattern: Boolean, private val scale: Double, private val combined: Boolean = false) {
     @FXML
     private var resolutionXInput: TextField? = null
     @FXML
@@ -54,13 +55,17 @@ class ResolutionChoiceController(private val pattern: Boolean, private val scale
         if (file != null) {
             try {
                 val canvas = Canvas(resolutionXInput!!.text.toDouble(), resolutionYInput!!.text.toDouble())
-                if (pattern) {
-                    drawIntensity(canvas, intensity!!, scale)
+                if (!combined) {
+                    if (pattern) {
+                        drawIntensity(canvas, intensity!!, scale)
+                    } else {
+                        val plotDrawer = SimplePlotDrawer(canvas)
+                        plotDrawer.addValues(plotIntensity1!!.intensities, Color.RED)
+                        plotDrawer.addValues(plotIntensity2!!.intensities, Color.BLUE)
+                        plotDrawer.draw()
+                    }
                 } else {
-                    val plotDrawer = SimplePlotDrawer(canvas)
-                    plotDrawer.addValues(plotIntensity1!!.intensities, Color.RED)
-                    plotDrawer.addValues(plotIntensity2!!.intensities, Color.BLUE)
-                    plotDrawer.draw()
+                    drawCombinedIntensity(canvas, intensities!!, scale)
                 }
                 val image = canvas.snapshot(null, null)
                 val img = SwingFXUtils.fromFXImage(image, null)
