@@ -2,9 +2,12 @@ package cz.vutbr.fit.xflajs00.fyo.drawing
 
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
+import java.awt.image.BufferedImage
 import kotlin.math.ceil
 
+
 class Intensity(val waveLength: Double, val intensities: Array<Double>)
+class Resolution(val width: Int, val height: Int)
 
 /**
  * Draw intensities map on a provided canvas.
@@ -18,19 +21,13 @@ fun drawIntensity(canvas: Canvas, intensity: Intensity, scaleFactor: Double = 1.
     val rgb = waveLengthToRGB(intensity.waveLength, 0.01)
     for (i in 0 until canvas.width.toInt()) {
         val count = ceil(step).toInt()
-        var wIntensity = 0.0
+        var wIntensity: Double
         val curIntPos = curPos.toInt()
 
-        if (curIntPos + count < intensity.intensities.size) {
-            wIntensity = intensity.intensities.sliceArray(IntRange(curIntPos, curIntPos + count)).max()!!
+        wIntensity = if (curIntPos + count < intensity.intensities.size) {
+            intensity.intensities.sliceArray(IntRange(curIntPos, curIntPos + count)).max()!!
         } else {
-            wIntensity = intensity.intensities[curIntPos]
-        }
-        for (i1 in 0..count) {
-            break
-            if (curIntPos + i1 < intensity.intensities.size) {
-                wIntensity += intensity.intensities[curIntPos + i1]
-            }
+            intensity.intensities[curIntPos]
         }
 
         val intensityColor = getColor(rgb, wIntensity, scaleFactor)
@@ -39,6 +36,39 @@ fun drawIntensity(canvas: Canvas, intensity: Intensity, scaleFactor: Double = 1.
         canvas.graphicsContext2D.strokeLine(i.toDouble(), 0.0, i.toDouble(), canvas.height)
         curPos += step
     }
+}
+
+/**
+ * Draw intensities map on a provided canvas.
+ * @param canvas canvas to draw on
+ * @param intensity intensities in given points and its color
+ * @param scaleFactor intensities scaling factor
+ */
+fun drawIntensity(resolution: Resolution, intensity: Intensity, scaleFactor: Double = 1.0): BufferedImage {
+    val bi = BufferedImage(resolution.width, resolution.height, BufferedImage.TYPE_INT_ARGB)
+    val ig2 = bi.createGraphics()
+
+    val step = intensity.intensities.size / resolution.width.toDouble()
+    var curPos = 0.0
+    val rgb = waveLengthToRGB(intensity.waveLength, 0.01)
+    for (i in 0 until resolution.width) {
+        val count = ceil(step).toInt()
+        var wIntensity: Double
+        val curIntPos = curPos.toInt()
+
+        wIntensity = if (curIntPos + count < intensity.intensities.size) {
+            intensity.intensities.sliceArray(IntRange(curIntPos, curIntPos + count)).max()!!
+        } else {
+            intensity.intensities[curIntPos]
+        }
+
+        val intensityColor = getColor(rgb, wIntensity, scaleFactor)
+        ig2.paint = java.awt.Color(intensityColor.red.toFloat(), intensityColor.green.toFloat(), intensityColor.blue.toFloat(), 1.0f)
+        ig2.drawLine(i, 0, i, resolution.height)
+        curPos += step
+    }
+
+    return bi
 }
 
 /**

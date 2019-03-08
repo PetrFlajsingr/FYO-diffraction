@@ -1,6 +1,7 @@
 package cz.vutbr.fit.xflajs00.fyo.controllers
 
-import cz.vutbr.fit.xflajs00.fyo.*
+import cz.vutbr.fit.xflajs00.fyo.FraunhoferDiffraction
+import cz.vutbr.fit.xflajs00.fyo.NumberIntStringConverter
 import cz.vutbr.fit.xflajs00.fyo.drawing.Intensity
 import cz.vutbr.fit.xflajs00.fyo.drawing.SimplePlotDrawer
 import cz.vutbr.fit.xflajs00.fyo.drawing.drawCombinedIntensity
@@ -51,6 +52,7 @@ class Controller {
     private var diffTypeComboBox: ComboBox<String>? = null
 
     private val fraunhoferDiffraction = FraunhoferDiffraction()
+    private var intensity: Intensity? = null
 
 
     @FXML
@@ -182,7 +184,8 @@ class Controller {
         val step = (second - first) / 30000
         val tmp = fraunhoferDiffraction.calcInterval(first, second, step)
 
-        drawIntensity(intensityCanvas!!, Intensity(fraunhoferDiffraction.λ, tmp), intensitySlider!!.value)
+        intensity = Intensity(fraunhoferDiffraction.λ, tmp)
+        drawIntensity(intensityCanvas!!, intensity!!, intensitySlider!!.value)
 
         val t2 = FraunhoferDiffraction()
         t2.λ = wavelengthSlider!!.value * 1e-9
@@ -197,6 +200,35 @@ class Controller {
         d.addValues(tmp2, Color.BLUE)
         d.addXAxisText("0°", 0.5)
         d.draw()
+    }
+
+
+    fun saveDiffractionPattern() {
+        val loader = FXMLLoader()
+        loader.location = javaClass.classLoader.getResource("resolution_choice.fxml")
+        val controller = ResolutionChoiceController(true, intensity!!, intensitySlider!!.value)
+        loader.setController(controller)
+        val root = loader.load<Parent>()
+        val stage = Stage()
+        stage.title = "Save diffraction pattern"
+        stage.scene = Scene(root)
+        stage.isResizable = false
+        stage.initModality(Modality.APPLICATION_MODAL)
+        stage.showAndWait()
+    }
+
+    fun saveGraph() {
+        val loader = FXMLLoader()
+        loader.location = javaClass.classLoader.getResource("resolution_choice.fxml")
+        val controller = ResolutionChoiceController(false, intensity!!, intensitySlider!!.value)
+        loader.setController(controller)
+        val root = loader.load<Parent>()
+        val stage = Stage()
+        stage.title = "Save diffraction pattern"
+        stage.scene = Scene(root)
+        stage.isResizable = false
+        stage.initModality(Modality.APPLICATION_MODAL)
+        stage.showAndWait()
     }
 
 }

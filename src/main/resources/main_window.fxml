@@ -103,8 +103,8 @@
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <Menu mnemonicParsing="false" text="Save">
-                <MenuItem mnemonicParsing="false" text="Save diffraction pattern"/>
-                <MenuItem mnemonicParsing="false" text="Save graph"/>
+                <MenuItem mnemonicParsing="false" onAction="#saveDiffractionPattern" text="Save diffraction pattern"/>
+                <MenuItem mnemonicParsing="false" onAction="#saveGraph" text="Save graph"/>
             </Menu>
             <Menu mnemonicParsing="false" text="Settings">
                 <MenuItem mnemonicParsing="false" onAction="#openSettings" text="Settings"/>

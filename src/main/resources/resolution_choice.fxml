@@ -13,8 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 <GridPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="158.0" prefWidth="253.0"
-          xmlns="http://javafx.com/javafx/8.0.172-ea"
-          fx:controller="cz.vutbr.fit.xflajs00.fyo.controllers.ResolutionChoiceController">
+          xmlns="http://javafx.com/javafx/8.0.172-ea">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
     </columnConstraints>
@@ -26,24 +25,24 @@
     </rowConstraints>
     <Label text="Choose resolution and file type"/>
     <HBox alignment="CENTER" prefHeight="54.0" prefWidth="253.0" GridPane.rowIndex="1">
-        <TextField prefHeight="27.0" prefWidth="115.0"/>
+        <TextField fx:id="resolutionXInput" prefHeight="27.0" prefWidth="115.0" text="1000"/>
         <Label text="x"/>
-        <TextField prefHeight="27.0" prefWidth="115.0"/>
+        <TextField fx:id="resolutionYInput" prefHeight="27.0" prefWidth="115.0" text="200"/>
         <Label text="px"/>
     </HBox>
-    <ChoiceBox prefHeight="27.0" prefWidth="240.0" value="png" GridPane.rowIndex="2">
+    <ChoiceBox fx:id="formatChoice" prefHeight="27.0" prefWidth="240.0" value="png" GridPane.rowIndex="2">
         <items>
             <FXCollections fx:factory="observableArrayList">
-                <String fx:value="png"/>
-                <String fx:value="jpg"/>
-                <String fx:value="bmp"/>
+                <String fx:value="PNG"/>
+                <String fx:value="JPEG"/>
+                <String fx:value="BMP"/>
             </FXCollections>
         </items>
     </ChoiceBox>
     <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="3">
         <buttons>
-            <Button mnemonicParsing="false" text="OK"/>
-            <Button mnemonicParsing="false" text="Cancel"/>
+            <Button mnemonicParsing="false" onAction="#saveImage" text="OK"/>
+            <Button mnemonicParsing="false" onAction="#close" text="Cancel"/>
         </buttons>
     </ButtonBar>
 </GridPane>
