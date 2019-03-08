@@ -99,6 +99,10 @@ class ConfigModel(key: String, value: String) {
     private var keyProperty = SimpleStringProperty(key)
     private var valueProperty = SimpleStringProperty(value)
 
+    fun getRawKey(): String {
+        return keyProperty.get()
+    }
+
     fun getKey(): String {
         return propKeyToString(keyProperty.get())
     }

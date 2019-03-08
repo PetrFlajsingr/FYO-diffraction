@@ -3,6 +3,7 @@ package cz.vutbr.fit.xflajs00.fyo.controllers
 import cz.vutbr.fit.xflajs00.fyo.FraunhoferDiffraction
 import cz.vutbr.fit.xflajs00.fyo.NumberIntStringConverter
 import cz.vutbr.fit.xflajs00.fyo.drawing.*
+import cz.vutbr.fit.xflajs00.fyo.models.ConfigModel
 import cz.vutbr.fit.xflajs00.fyo.models.LightSourceModel
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -57,6 +58,24 @@ class Controller {
 
     private var combinedWavelength = false
 
+    private var monoStep: Int = 15000
+    private var combStep: Int = 7500
+    private var combWaveStep: Double = 5.0
+
+    init {
+        setConfigValues()
+    }
+
+    fun setConfigValues() {
+        val configs = ConfigModel.loadFromConfig()
+        for (config in configs) {
+            when (config.getRawKey()) {
+                "mono_step" -> monoStep = config.getValue().toInt()
+                "comb_step" -> combStep = config.getValue().toInt()
+                "comb_wave_step" -> combWaveStep = config.getValue().toDouble()
+            }
+        }
+    }
 
     @FXML
     fun initialize() {
@@ -140,6 +159,8 @@ class Controller {
         stage.isResizable = false
         stage.initModality(Modality.APPLICATION_MODAL)
         stage.showAndWait()
+        setConfigValues()
+        drawDiffraction()
     }
 
     fun firstShow() {
@@ -170,11 +191,11 @@ class Controller {
             fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
             val first = -PI / 4
             val second = PI / 4
-            val step = (second - first) / 7500
+            val step = (second - first) / combStep
             vals.add(Intensity(λ * 1e-9, fraunhoferDiffraction.calcInterval(first, second, step)))
         }
         for (intensityInterval in selectedLightSource.waveLengthIntervals) {
-            for (λ in intensityInterval.first..intensityInterval.second step 5.0) {
+            for (λ in intensityInterval.first..intensityInterval.second step combWaveStep) {
                 fraunhoferDiffraction.λ = λ * 1e-9
                 fraunhoferDiffraction.D = projectDistSlider!!.value
                 fraunhoferDiffraction.N = slitCountInput!!.value
@@ -182,7 +203,7 @@ class Controller {
                 fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
                 val first = -PI / 4
                 val second = PI / 4
-                val step = (second - first) / 7500
+                val step = (second - first) / combStep
                 vals.add(Intensity(λ * 1e-9, fraunhoferDiffraction.calcInterval(first, second, step)))
             }
         }
@@ -210,7 +231,7 @@ class Controller {
         fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
         val first = -PI / 4
         val second = PI / 4
-        val step = (second - first) / 30000
+        val step = (second - first) / monoStep
 
         intensity = Intensity(fraunhoferDiffraction.λ, fraunhoferDiffraction.calcInterval(first, second, step))
         drawIntensity(intensityCanvas!!, intensity!!, intensitySlider!!.value)

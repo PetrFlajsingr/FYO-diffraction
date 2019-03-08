@@ -5,7 +5,6 @@ import cz.vutbr.fit.xflajs00.fyo.models.LightSourceModel
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.control.*
-import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.control.cell.TextFieldListCell
 import javafx.scene.control.cell.TextFieldTableCell
@@ -31,7 +30,16 @@ class SettingsController {
         valueColumn.cellFactory = TextFieldTableCell.forTableColumn<ConfigModel>()
         valueColumn.setOnEditCommit { event ->
             val evt = event as TableColumn.CellEditEvent<ConfigModel, String>
+            if (evt.newValue.toDoubleOrNull() == null) {
+                return@setOnEditCommit
+            }
             val model = evt.tableView.items[evt.tablePosition.row]
+            if (model.getKey() == "comb_step" || model.getKey() == "mono_step") {
+                val value = evt.newValue.toIntOrNull()
+                if (value == null || value < 100) {
+                    return@setOnEditCommit
+                }
+            }
             model.setValue(evt.newValue)
         }
         valueColumn.cellValueFactory = PropertyValueFactory<ConfigModel, String>("value")
@@ -90,15 +98,8 @@ class SettingsController {
     }
 
     fun onClose() {
-        val alert = Alert(AlertType.INFORMATION)
-        alert.title = "Information"
-        alert.headerText = "Information"
-        alert.contentText = "Rerun the application to apply changes"
-
         ConfigModel.saveToConfig(configTable!!.items)
         LightSourceModel.saveToConfig(lightSources)
-
-        alert.show()
     }
 
     fun addLightSource() {

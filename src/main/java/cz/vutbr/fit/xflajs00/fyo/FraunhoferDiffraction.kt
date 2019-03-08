@@ -84,7 +84,7 @@ class FraunhoferDiffraction {
         //  mirror the first half
         val reversed = result.copyOfRange(0, result.size / 2)
         reversed.reverse()
-        for (i in result.size / 2 until result.size ) {
+        for (i in result.size / 2 until result.size - 1) {
             result[i] = reversed[i - result.size / 2]
         }
         //  normalise using maximum intensities
