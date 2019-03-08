@@ -86,6 +86,10 @@
                     <Label text="m"/>
                 </HBox>
                 <Separator prefWidth="200.0"/>
+                <Label text="Field of view"/>
+                <Slider fx:id="fovSlider" majorTickUnit="10.0" max="90.0" min="10.0" minorTickCount="5"
+                        showTickLabels="true" showTickMarks="true" value="45.0"/>
+                <Label fx:id="degreeLabel" text="45°"/>
             </VBox>
             <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowSpan="3"/>
             <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2">

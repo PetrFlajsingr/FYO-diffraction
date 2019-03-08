@@ -1,9 +1,6 @@
 package cz.vutbr.fit.xflajs00.fyo.controllers
 
-import cz.vutbr.fit.xflajs00.fyo.drawing.Intensity
-import cz.vutbr.fit.xflajs00.fyo.drawing.SimplePlotDrawer
-import cz.vutbr.fit.xflajs00.fyo.drawing.drawCombinedIntensity
-import cz.vutbr.fit.xflajs00.fyo.drawing.drawIntensity
+import cz.vutbr.fit.xflajs00.fyo.drawing.*
 import javafx.embed.swing.SwingFXUtils
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
@@ -65,7 +62,15 @@ class ResolutionChoiceController(private val pattern: Boolean, private val scale
                         plotDrawer.draw()
                     }
                 } else {
-                    drawCombinedIntensity(canvas, intensities!!, scale)
+                    if (pattern) {
+                        drawCombinedIntensity(canvas, intensities!!, scale)
+                    } else {
+                        val plotDrawer = SimplePlotDrawer(canvas)
+                        for (intensity in intensities!!) {
+                            plotDrawer.addValues(intensity.intensities, getColor(waveLengthToRGB(intensity.waveLength), 1.0))
+                        }
+                        plotDrawer.draw()
+                    }
                 }
                 val image = canvas.snapshot(null, null)
                 val img = SwingFXUtils.fromFXImage(image, null)

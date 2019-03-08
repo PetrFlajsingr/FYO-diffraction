@@ -10,16 +10,11 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
-import javafx.scene.control.ChoiceBox
-import javafx.scene.control.Slider
-import javafx.scene.control.Spinner
-import javafx.scene.control.TextField
+import javafx.scene.control.*
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.stage.Modality
 import javafx.stage.Stage
-import javafx.scene.control.RadioButton
-import javafx.scene.control.ToggleGroup
 import javafx.util.converter.NumberStringConverter
 import kotlin.math.PI
 
@@ -50,6 +45,10 @@ class Controller {
     @FXML
     private var graphCanvas: Canvas? = null
     @FXML
+    private var fovSlider: Slider? = null
+    @FXML
+    private var degreeLabel: Label? = null
+    @FXML
     private var lightSourceChoice: ChoiceBox<String>? = null
     @FXML
     private var colorRadioButton: RadioButton? = null
@@ -60,6 +59,7 @@ class Controller {
     private val fraunhoferDiffraction = FraunhoferDiffraction()
     private var intensity: Intensity? = null
     private var intensityN1: Intensity? = null
+    private var intensities: List<Intensity>? = null
 
     private var lightSources: List<LightSourceModel> = emptyList()
 
@@ -91,6 +91,12 @@ class Controller {
         radioGroup.selectedToggleProperty().addListener { _ ->
             drawDiffraction()
         }
+
+        fovSlider?.valueProperty()?.addListener { _ ->
+            degreeLabel?.text = fovSlider?.value?.toInt().toString() + "°"
+            drawDiffraction()
+        }
+
         wavelengthInput?.textProperty()?.addListener { _, oldValue, newValue ->
             if (newValue.toDoubleOrNull() == null) {
                 wavelengthInput?.text = oldValue
@@ -201,8 +207,8 @@ class Controller {
             fraunhoferDiffraction.N = slitCountInput!!.value
             fraunhoferDiffraction.a = slitWidthInput!!.text.toDouble() * 10e-9
             fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
-            val first = -PI / 4
-            val second = PI / 4
+            val first = -getFOVRad()
+            val second = getFOVRad()
             val step = (second - first) / combStep
             vals.add(Intensity(λ * 1e-9, fraunhoferDiffraction.calcInterval(first, second, step)))
         }
@@ -213,12 +219,13 @@ class Controller {
                 fraunhoferDiffraction.N = slitCountInput!!.value
                 fraunhoferDiffraction.a = slitWidthInput!!.text.toDouble() * 10e-9
                 fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
-                val first = -PI / 4
-                val second = PI / 4
+                val first = -getFOVRad()
+                val second = getFOVRad()
                 val step = (second - first) / combStep
                 vals.add(Intensity(λ * 1e-9, fraunhoferDiffraction.calcInterval(first, second, step)))
             }
         }
+        intensities = vals
         drawCombinedIntensity(intensityCanvas!!, vals, intensitySlider!!.value, colorRadioButton!!.isSelected)
 
         val d = SimplePlotDrawer(graphCanvas!!)
@@ -241,8 +248,8 @@ class Controller {
         fraunhoferDiffraction.N = slitCountInput!!.value
         fraunhoferDiffraction.a = slitWidthInput!!.text.toDouble() * 10e-9
         fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
-        val first = -PI / 4
-        val second = PI / 4
+        val first = -getFOVRad()
+        val second = getFOVRad()
         val step = (second - first) / monoStep
 
         intensity = Intensity(fraunhoferDiffraction.λ, fraunhoferDiffraction.calcInterval(first, second, step))
@@ -267,8 +274,9 @@ class Controller {
     fun saveDiffractionPattern() {
         val loader = FXMLLoader()
         loader.location = javaClass.classLoader.getResource("resolution_choice.fxml")
-        val controller = ResolutionChoiceController(true, intensitySlider!!.value)
+        val controller = ResolutionChoiceController(true, intensitySlider!!.value, lightSourceChoice!!.selectionModel.selectedIndex != 0)
         controller.intensity = intensity
+        controller.intensities = intensities
         loader.setController(controller)
         val root = loader.load<Parent>()
         val stage = Stage()
@@ -282,9 +290,10 @@ class Controller {
     fun saveGraph() {
         val loader = FXMLLoader()
         loader.location = javaClass.classLoader.getResource("resolution_choice.fxml")
-        val controller = ResolutionChoiceController(false, intensitySlider!!.value)
+        val controller = ResolutionChoiceController(false, intensitySlider!!.value, lightSourceChoice!!.selectionModel.selectedIndex != 0)
         controller.plotIntensity1 = intensity
         controller.plotIntensity2 = intensityN1
+        controller.intensities = intensities
         loader.setController(controller)
         val root = loader.load<Parent>()
         val stage = Stage()
@@ -294,5 +303,7 @@ class Controller {
         stage.initModality(Modality.APPLICATION_MODAL)
         stage.showAndWait()
     }
+
+    private fun getFOVRad() = fovSlider!!.value * (PI / 180)
 
 }

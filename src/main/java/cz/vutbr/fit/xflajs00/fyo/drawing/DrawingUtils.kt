@@ -2,7 +2,6 @@ package cz.vutbr.fit.xflajs00.fyo.drawing
 
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
-import java.awt.image.BufferedImage
 import kotlin.math.ceil
 
 
@@ -67,14 +66,8 @@ fun drawCombinedIntensity(canvas: Canvas, intensities: List<Intensity>, scaleFac
         }
     }
     for (i in 0 until resultColors.size) {
-        if (resultColors[i][0] > 1.0) {
-            resultColors[i][0] = 1.0
-        }
-        if (resultColors[i][1] > 1.0) {
-            resultColors[i][1] = 1.0
-        }
-        if (resultColors[i][2] > 1.0) {
-            resultColors[i][2] = 1.0
+        if (resultColors[i].any { v -> v > 1.0 }) {
+            resultColors[i] = normalise(resultColors[i])
         }
         val intensityColor = Color(resultColors[i][0], resultColors[i][1], resultColors[i][2], 1.0)
         canvas.graphicsContext2D.fill = intensityColor
@@ -83,23 +76,27 @@ fun drawCombinedIntensity(canvas: Canvas, intensities: List<Intensity>, scaleFac
     }
 }
 
+fun normalise(values: DoubleArray): DoubleArray {
+    val result = values.clone()
+    val max = result.max()!!
+    for (i in 0 until result.size) {
+        result[i] = result[i] / max
+    }
+    return result
+}
+
 /**
  * Convert RGB array to Color. Modify it by intensities and scale factor.
  */
 fun getColor(rgb: DoubleArray, intensity: Double, scaleFactor: Double = 1.0): Color {
-    var red = rgb[0] * intensity * scaleFactor
-    if (red > 1.0) {
-        red = 1.0
+    var rgbResult = rgb.clone()
+    rgbResult[0] = rgb[0] * intensity * scaleFactor
+    rgbResult[1] = rgb[1] * intensity * scaleFactor
+    rgbResult[2] = rgb[2] * intensity * scaleFactor
+    if (rgbResult.any { v -> v > 1.0 }) {
+        rgbResult = normalise(rgbResult)
     }
-    var green = rgb[1] * intensity * scaleFactor
-    if (green > 1.0) {
-        green = 1.0
-    }
-    var blue = rgb[2] * intensity * scaleFactor
-    if (blue > 1.0) {
-        blue = 1.0
-    }
-    return Color(red, green, blue, 1.0)
+    return Color(rgbResult[0], rgbResult[1], rgbResult[2], 1.0)
 }
 
 /**
