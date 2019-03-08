@@ -42,7 +42,11 @@ class LightSourceModel(val name: String, wavelengths: List<String> = emptyList()
     }
 
     fun setFromMemoString(str: String) {
-        parseWavelengths(str.split("\n"))
+        var innerStr = str
+        if (innerStr.endsWith("\n")) {
+            innerStr = innerStr.substring(0, str.length - 2)
+        }
+        parseWavelengths(innerStr.split("\n"))
     }
 
     override fun toString(): String {
@@ -82,8 +86,9 @@ class LightSourceModel(val name: String, wavelengths: List<String> = emptyList()
             val prop = Properties()
             val resourceUrl = javaClass.classLoader.getResource("light_sources.conf")
             val file = File(resourceUrl.toURI())
-            for ((i, property) in vals.withIndex()) {
-                prop.setProperty(i.toString(), property.toString())
+            for (value in vals) {
+                val strRep = value.toString().split(":")
+                prop.setProperty(strRep[0], strRep[1])
             }
             prop.save(FileOutputStream(file), "")
         }

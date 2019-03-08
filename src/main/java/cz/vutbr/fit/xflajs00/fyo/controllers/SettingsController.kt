@@ -20,6 +20,8 @@ class SettingsController {
 
     var lightSources = mutableListOf<LightSourceModel>()
 
+    private var lastSelectedIndex = -1
+
     @FXML
     fun initialize() {
         configTable?.isEditable = true
@@ -52,13 +54,15 @@ class SettingsController {
 
         combWaveLengthList?.selectionModel?.selectionMode = SelectionMode.SINGLE
         combWaveLengthList?.selectionModel?.selectedIndices?.addListener(ListChangeListener {
+            if (lastSelectedIndex != -1 && !memo!!.text.isEmpty()) {
+                waveLengthsToSource(lastSelectedIndex, memo!!.text)
+            }
             val index = combWaveLengthList!!.selectionModel!!.selectedIndex
             memo?.text = lightSources[index].memoString()
+            lastSelectedIndex = index
         })
 
         combWaveLengthList!!.selectionModel!!.select(0)
-
-        memo?.textProperty()?.addListener { _, _, _ -> memo?.styleClass?.add("error"); }
     }
 
     fun onClose() {
@@ -68,8 +72,9 @@ class SettingsController {
         alert.contentText = "Rerun the application to apply changes"
 
         ConfigModel.saveToConfig(configTable!!.items)
+        LightSourceModel.saveToConfig(lightSources)
 
-        alert.showAndWait()
+        alert.show()
     }
 
     fun addLightSource() {
@@ -81,5 +86,9 @@ class SettingsController {
         val index = combWaveLengthList!!.selectionModel!!.selectedIndex
         lightSources.removeAt(index)
         combWaveLengthList!!.items!!.removeAt(index)
+    }
+
+    private fun waveLengthsToSource(index: Int, str: String) {
+        lightSources[index].setFromMemoString(str)
     }
 }
