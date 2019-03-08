@@ -7,7 +7,7 @@ import java.io.FileOutputStream
 import java.util.*
 
 
-class LightSourceModel(val name: String, wavelengths: List<String> = emptyList()) {
+class LightSourceModel(var name: String, wavelengths: List<String> = emptyList()) {
     var waveLengthIntervals = emptyList<Pair<Double, Double>>()
     var waveLengths = emptyList<Double>()
 

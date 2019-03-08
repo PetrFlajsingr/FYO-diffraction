@@ -7,7 +7,9 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.cell.PropertyValueFactory
+import javafx.scene.control.cell.TextFieldListCell
 import javafx.scene.control.cell.TextFieldTableCell
+import javafx.util.StringConverter
 
 
 class SettingsController {
@@ -48,6 +50,27 @@ class SettingsController {
 
         lightSources = LightSourceModel.loadFromConfig().toMutableList()
 
+        combWaveLengthList?.isEditable = true
+        combWaveLengthList?.setCellFactory { lv ->
+            val cell = TextFieldListCell<String>()
+            cell.converter = object : StringConverter<String>() {
+                override fun toString(str: String): String {
+                    return str
+                }
+
+                override fun fromString(str: String): String {
+                    return str
+                }
+            }
+            cell
+        }
+        combWaveLengthList?.setOnEditCommit { event ->
+            val evt = event as ListView.EditEvent<String>
+            val index = combWaveLengthList!!.selectionModel.selectedIndex
+            combWaveLengthList!!.items[index] = evt.newValue
+            lightSources[index].name = combWaveLengthList!!.selectionModel.selectedItem
+
+        }
         for (lightSource in lightSources) {
             combWaveLengthList?.items?.add(lightSource.name)
         }
