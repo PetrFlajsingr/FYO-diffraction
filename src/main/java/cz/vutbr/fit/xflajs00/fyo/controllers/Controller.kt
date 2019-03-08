@@ -53,6 +53,7 @@ class Controller {
 
     private val fraunhoferDiffraction = FraunhoferDiffraction()
     private var intensity: Intensity? = null
+    private var intensityN1: Intensity? = null
 
 
     @FXML
@@ -182,9 +183,8 @@ class Controller {
         val first = -PI / 4 // / 200
         val second = PI / 4 // / 200
         val step = (second - first) / 30000
-        val tmp = fraunhoferDiffraction.calcInterval(first, second, step)
 
-        intensity = Intensity(fraunhoferDiffraction.λ, tmp)
+        intensity = Intensity(fraunhoferDiffraction.λ, fraunhoferDiffraction.calcInterval(first, second, step))
         drawIntensity(intensityCanvas!!, intensity!!, intensitySlider!!.value)
 
         val t2 = FraunhoferDiffraction()
@@ -193,11 +193,11 @@ class Controller {
         t2.N = 1
         t2.a = slitWidthInput!!.text.toDouble() * 10e-9
         t2.b = slitDistInput!!.text.toDouble() * 10e-9
-        val tmp2 = t2.calcInterval(first, second, step)
+        intensityN1 = Intensity(fraunhoferDiffraction.λ, t2.calcInterval(first, second, step))
 
         val d = SimplePlotDrawer(graphCanvas!!)
-        d.addValues(tmp, Color.RED)
-        d.addValues(tmp2, Color.BLUE)
+        d.addValues(intensity!!.intensities, Color.RED)
+        d.addValues(intensityN1!!.intensities, Color.BLUE)
         d.addXAxisText("0°", 0.5)
         d.draw()
     }
@@ -206,7 +206,8 @@ class Controller {
     fun saveDiffractionPattern() {
         val loader = FXMLLoader()
         loader.location = javaClass.classLoader.getResource("resolution_choice.fxml")
-        val controller = ResolutionChoiceController(true, intensity!!, intensitySlider!!.value)
+        val controller = ResolutionChoiceController(true, intensitySlider!!.value)
+        controller.intensity = intensity
         loader.setController(controller)
         val root = loader.load<Parent>()
         val stage = Stage()
@@ -220,7 +221,9 @@ class Controller {
     fun saveGraph() {
         val loader = FXMLLoader()
         loader.location = javaClass.classLoader.getResource("resolution_choice.fxml")
-        val controller = ResolutionChoiceController(false, intensity!!, intensitySlider!!.value)
+        val controller = ResolutionChoiceController(false, intensitySlider!!.value)
+        controller.plotIntensity1 = intensity
+        controller.plotIntensity2 = intensityN1
         loader.setController(controller)
         val root = loader.load<Parent>()
         val stage = Stage()
