@@ -155,5 +155,15 @@ fun waveLengthToRGB(wavelength: Double, defVal: Double = 0.0): DoubleArray {
     rgb[1] = if (green == 0.0) defVal else Math.pow(green * factor, gamma)
     rgb[2] = if (blue == 0.0) defVal else Math.pow(blue * factor, gamma)
 
+    if (rgb[0] > 1.0) {
+        rgb[0] = 1.0
+    }
+    if (rgb[1] > 1.0) {
+        rgb[1] = 1.0
+    }
+    if (rgb[2] > 1.0) {
+        rgb[2] = 1.0
+    }
+
     return rgb
 }

@@ -1,10 +1,16 @@
 package cz.vutbr.fit.xflajs00.fyo.models
 
+import cz.vutbr.fit.xflajs00.fyo.getJarLocation
 import javafx.beans.property.SimpleStringProperty
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
+import sun.font.LayoutPathImpl.getPath
+import java.net.URI
+import java.net.URLDecoder
+
+
 
 
 class LightSourceModel(var name: String, wavelengths: List<String> = emptyList()) {
@@ -65,6 +71,8 @@ class LightSourceModel(var name: String, wavelengths: List<String> = emptyList()
     }
 
     companion object {
+        private val jarLocation = getJarLocation()
+
         fun fromString(str: String): LightSourceModel {
             val nameEnd = str.indexOf(":")
             return LightSourceModel(str.substring(0, nameEnd), str.substring(nameEnd + 1).split(",").toList())
@@ -72,8 +80,8 @@ class LightSourceModel(var name: String, wavelengths: List<String> = emptyList()
 
         fun loadFromConfig(): List<LightSourceModel> {
             val prop = Properties()
-            val resourceUrl = javaClass.classLoader.getResource("light_sources.conf")
-            val file = FileInputStream(File(resourceUrl.toURI()))
+            val resourceUrl = "$jarLocation\\light_sources.conf"
+            val file = FileInputStream(File(resourceUrl))
             prop.load(file)
             val result = mutableListOf<LightSourceModel>()
             for (property in prop) {
@@ -84,8 +92,8 @@ class LightSourceModel(var name: String, wavelengths: List<String> = emptyList()
 
         fun saveToConfig(vals: List<LightSourceModel>) {
             val prop = Properties()
-            val resourceUrl = javaClass.classLoader.getResource("light_sources.conf")
-            val file = File(resourceUrl.toURI())
+            val resourceUrl = "$jarLocation\\light_sources.conf"
+            val file = File(resourceUrl)
             for (value in vals) {
                 val strRep = value.toString().split(":")
                 prop.setProperty(strRep[0], strRep[1])
@@ -120,10 +128,13 @@ class ConfigModel(key: String, value: String) {
     }
 
     companion object {
+        private val jarLocation = getJarLocation()
+
         fun loadFromConfig(): List<ConfigModel> {
             val prop = Properties()
-            val resourceUrl = javaClass.classLoader.getResource("settings.conf")
-            val file = FileInputStream(File(resourceUrl.toURI()))
+            val resourceUrl = "$jarLocation\\settings.conf"
+
+            val file = FileInputStream(File(resourceUrl))
             prop.load(file)
             val result = mutableListOf<ConfigModel>()
             for (property in prop) {
@@ -134,8 +145,8 @@ class ConfigModel(key: String, value: String) {
 
         fun saveToConfig(vals: List<ConfigModel>) {
             val prop = Properties()
-            val resourceUrl = javaClass.classLoader.getResource("settings.conf")
-            val file = File(resourceUrl.toURI())
+            val resourceUrl = "$jarLocation\\settings.conf"
+            val file = File(resourceUrl)
             for (property in vals) {
                 prop.setProperty(propStringToKey(property.getKey()), property.getValue());
             }
@@ -159,5 +170,15 @@ class ConfigModel(key: String, value: String) {
                 else -> str
             }
         }
+    }
+}
+
+fun stripFile(path: String): String {
+    return if (path.startsWith("file:\\")) {
+        path.substring(("file:\\").length)
+    } else if (path.startsWith("jar:file\\")) {
+        path.substring(("jar:file\\").length)
+    } else {
+        path
     }
 }
