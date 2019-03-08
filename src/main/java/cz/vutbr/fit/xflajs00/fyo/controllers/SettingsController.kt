@@ -55,6 +55,7 @@ class SettingsController {
             val cell = TextFieldListCell<String>()
             cell.converter = object : StringConverter<String>() {
                 override fun toString(str: String): String {
+                    str.replace(" ", "_")
                     return str
                 }
 
