@@ -18,6 +18,8 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.stage.Modality
 import javafx.stage.Stage
+import javafx.scene.control.RadioButton
+import javafx.scene.control.ToggleGroup
 import javafx.util.converter.NumberStringConverter
 import kotlin.math.PI
 
@@ -49,6 +51,11 @@ class Controller {
     private var graphCanvas: Canvas? = null
     @FXML
     private var lightSourceChoice: ChoiceBox<String>? = null
+    @FXML
+    private var colorRadioButton: RadioButton? = null
+    @FXML
+    private var intensityRadioButton: RadioButton? = null
+    private val radioGroup = ToggleGroup()
 
     private val fraunhoferDiffraction = FraunhoferDiffraction()
     private var intensity: Intensity? = null
@@ -79,6 +86,11 @@ class Controller {
 
     @FXML
     fun initialize() {
+        colorRadioButton?.toggleGroup = radioGroup
+        intensityRadioButton?.toggleGroup = radioGroup
+        radioGroup.selectedToggleProperty().addListener { _ ->
+            drawDiffraction()
+        }
         wavelengthInput?.textProperty()?.addListener { _, oldValue, newValue ->
             if (newValue.toDoubleOrNull() == null) {
                 wavelengthInput?.text = oldValue
@@ -207,7 +219,7 @@ class Controller {
                 vals.add(Intensity(λ * 1e-9, fraunhoferDiffraction.calcInterval(first, second, step)))
             }
         }
-        drawCombinedIntensity(intensityCanvas!!, vals, intensitySlider!!.value)
+        drawCombinedIntensity(intensityCanvas!!, vals, intensitySlider!!.value, colorRadioButton!!.isSelected)
 
         val d = SimplePlotDrawer(graphCanvas!!)
         for (value in vals) {
@@ -234,7 +246,7 @@ class Controller {
         val step = (second - first) / monoStep
 
         intensity = Intensity(fraunhoferDiffraction.λ, fraunhoferDiffraction.calcInterval(first, second, step))
-        drawIntensity(intensityCanvas!!, intensity!!, intensitySlider!!.value)
+        drawIntensity(intensityCanvas!!, intensity!!, intensitySlider!!.value, colorRadioButton!!.isSelected)
 
         val t2 = FraunhoferDiffraction()
         t2.λ = wavelengthSlider!!.value * 1e-9

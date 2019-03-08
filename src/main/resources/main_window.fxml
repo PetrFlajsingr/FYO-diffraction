@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
@@ -48,6 +49,13 @@
                 <HBox alignment="CENTER" prefHeight="40.0" prefWidth="240.0">
                     <TextField fx:id="wavelengthInput" text="500"/>
                     <Label text="nm"/>
+                </HBox>
+                <HBox alignment="CENTER" prefHeight="33.0" prefWidth="240.0">
+                    <children>
+                        <RadioButton fx:id="colorRadioButton" mnemonicParsing="false" prefHeight="18.0"
+                                     prefWidth="106.0" selected="true" text="Color"/>
+                        <RadioButton fx:id="intensityRadioButton" mnemonicParsing="false" text="Intensity"/>
+                    </children>
                 </HBox>
                 <Separator prefWidth="200.0"/>
                 <VBox alignment="CENTER" prefHeight="55.0">

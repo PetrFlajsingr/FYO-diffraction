@@ -15,7 +15,7 @@ class Resolution(val width: Int, val height: Int)
  * @param intensity intensities in given points and its color
  * @param scaleFactor intensities scaling factor
  */
-fun drawIntensity(canvas: Canvas, intensity: Intensity, scaleFactor: Double = 1.0) {
+fun drawIntensity(canvas: Canvas, intensity: Intensity, scaleFactor: Double = 1.0, drawColor: Boolean = true) {
     val step = intensity.intensities.size / canvas.width
     var curPos = 0.0
     val rgb = waveLengthToRGB(intensity.waveLength, 0.01)
@@ -30,7 +30,11 @@ fun drawIntensity(canvas: Canvas, intensity: Intensity, scaleFactor: Double = 1.
             intensity.intensities[curIntPos]
         }
 
-        val intensityColor = getColor(rgb, wIntensity, scaleFactor)
+        val intensityColor = if (drawColor) {
+            getColor(rgb, wIntensity, scaleFactor)
+        } else {
+            getColor(doubleArrayOf(1.0, 1.0, 1.0), wIntensity, scaleFactor)
+        }
         canvas.graphicsContext2D.fill = intensityColor
         canvas.graphicsContext2D.stroke = intensityColor
         canvas.graphicsContext2D.strokeLine(i.toDouble(), 0.0, i.toDouble(), canvas.height)
@@ -44,14 +48,18 @@ fun drawIntensity(canvas: Canvas, intensity: Intensity, scaleFactor: Double = 1.
  * @param intensities
  * #param scaleFactor intensities scaling factor
  */
-fun drawCombinedIntensity(canvas: Canvas, intensities: List<Intensity>, scaleFactor: Double = 1.0) {
+fun drawCombinedIntensity(canvas: Canvas, intensities: List<Intensity>, scaleFactor: Double = 1.0, drawColor: Boolean = true) {
     val resultColors = Array(canvas.width.toInt()) { DoubleArray(3) { 0.0 } }
     for (intensity in intensities) {
         val step = intensity.intensities.size / canvas.width
         var curPos = 0.0
         val color = waveLengthToRGB(intensity.waveLength)
         for (i in 0 until canvas.width.toInt()) {
-            val intensityColor = getColor(color, intensity.intensities[curPos.toInt()], scaleFactor)
+            val intensityColor = if (drawColor) {
+                getColor(color, intensity.intensities[curPos.toInt()], scaleFactor)
+            } else {
+                getColor(doubleArrayOf(1.0, 1.0, 1.0), intensity.intensities[curPos.toInt()], scaleFactor)
+            }
             resultColors[i][0] += intensityColor.red
             resultColors[i][1] += intensityColor.green
             resultColors[i][2] += intensityColor.blue
