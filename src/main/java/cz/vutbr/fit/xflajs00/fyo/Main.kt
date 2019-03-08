@@ -20,9 +20,6 @@ class Main : javafx.application.Application() {
 
     @Throws(Exception::class)
     override fun start(primaryStage: Stage?) {
-        for (i in getFilesInFolder(getJarPath() + "config")) {
-            println(i)
-        }
         val loader = FXMLLoader()
         loader.location = javaClass.classLoader.getResource("main_window.fxml")
         val controller = Controller()

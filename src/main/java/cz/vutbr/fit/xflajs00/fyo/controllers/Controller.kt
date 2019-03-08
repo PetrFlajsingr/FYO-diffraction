@@ -2,16 +2,14 @@ package cz.vutbr.fit.xflajs00.fyo.controllers
 
 import cz.vutbr.fit.xflajs00.fyo.FraunhoferDiffraction
 import cz.vutbr.fit.xflajs00.fyo.NumberIntStringConverter
-import cz.vutbr.fit.xflajs00.fyo.drawing.Intensity
-import cz.vutbr.fit.xflajs00.fyo.drawing.SimplePlotDrawer
-import cz.vutbr.fit.xflajs00.fyo.drawing.drawCombinedIntensity
-import cz.vutbr.fit.xflajs00.fyo.drawing.drawIntensity
+import cz.vutbr.fit.xflajs00.fyo.drawing.*
+import cz.vutbr.fit.xflajs00.fyo.models.LightSourceModel
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
-import javafx.scene.control.ComboBox
+import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Slider
 import javafx.scene.control.Spinner
 import javafx.scene.control.TextField
@@ -49,11 +47,15 @@ class Controller {
     @FXML
     private var graphCanvas: Canvas? = null
     @FXML
-    private var diffTypeComboBox: ComboBox<String>? = null
+    private var lightSourceChoice: ChoiceBox<String>? = null
 
     private val fraunhoferDiffraction = FraunhoferDiffraction()
     private var intensity: Intensity? = null
     private var intensityN1: Intensity? = null
+
+    private var lightSources: List<LightSourceModel> = emptyList()
+
+    private var combinedWavelength = false
 
 
     @FXML
@@ -104,7 +106,26 @@ class Controller {
         graphCanvas?.widthProperty()?.bind(chartPane?.widthProperty())
         graphCanvas?.heightProperty()?.bind(chartPane?.heightProperty())
 
-        diffTypeComboBox?.selectionModel?.select(0)
+        lightSources = LightSourceModel.loadFromConfig()
+
+        lightSourceChoice?.items?.add("Monochromatic")
+        lightSourceChoice?.selectionModel?.select(0)
+        lightSourceChoice?.selectionModel?.selectedIndexProperty()?.addListener { _, _, newValue ->
+            if (newValue != 0) {
+                wavelengthSlider?.isDisable = true
+                wavelengthInput?.isDisable = true
+                combinedWavelength = true
+            } else {
+                wavelengthSlider?.isDisable = false
+                wavelengthInput?.isDisable = false
+                combinedWavelength = false
+            }
+            drawDiffraction()
+        }
+
+        for (source in lightSources) {
+            lightSourceChoice?.items?.add(source.name)
+        }
     }
 
     fun openSettings() {
@@ -138,8 +159,10 @@ class Controller {
     }
 
     private fun drawCombinedDiffraction() {
+        val selectedLightSource = lightSources[lightSourceChoice!!.selectionModel.selectedIndex - 1]
+
         val vals = mutableListOf<Intensity>()
-        for (λ in 380.0..750.0 step 5.0) {
+        for (λ in selectedLightSource.waveLengths) {
             fraunhoferDiffraction.λ = λ * 1e-9
             fraunhoferDiffraction.D = projectDistSlider!!.value
             fraunhoferDiffraction.N = slitCountInput!!.value
@@ -150,38 +173,43 @@ class Controller {
             val step = (second - first) / 7500
             vals.add(Intensity(λ * 1e-9, fraunhoferDiffraction.calcInterval(first, second, step)))
         }
+        for (intensityInterval in selectedLightSource.waveLengthIntervals) {
+            for (λ in intensityInterval.first..intensityInterval.second step 5.0) {
+                fraunhoferDiffraction.λ = λ * 1e-9
+                fraunhoferDiffraction.D = projectDistSlider!!.value
+                fraunhoferDiffraction.N = slitCountInput!!.value
+                fraunhoferDiffraction.a = slitWidthInput!!.text.toDouble() * 10e-9
+                fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
+                val first = -PI / 4
+                val second = PI / 4
+                val step = (second - first) / 7500
+                vals.add(Intensity(λ * 1e-9, fraunhoferDiffraction.calcInterval(first, second, step)))
+            }
+        }
         drawCombinedIntensity(intensityCanvas!!, vals, intensitySlider!!.value)
 
-        val first = -PI / 4 // / 200
-        val second = PI / 4 // / 200
-        val step = (second - first) / 30000
-        val t2 = FraunhoferDiffraction()
-        t2.λ = wavelengthSlider!!.value * 1e-9
-        t2.D = projectDistSlider!!.value
-        t2.N = 1
-        t2.a = slitWidthInput!!.text.toDouble() * 10e-9
-        t2.b = slitDistInput!!.text.toDouble() * 10e-9
-        val tmp2 = t2.calcInterval(first, second, step)
-
         val d = SimplePlotDrawer(graphCanvas!!)
-        d.addValues(tmp2, Color.BLUE)
+        for (value in vals) {
+            val rgb = waveLengthToRGB(value.waveLength)
+            d.addValues(value.intensities, Color(rgb[0], rgb[1], rgb[2], 1.0))
+        }
         d.addXAxisText("0°", 0.5)
         d.draw()
     }
 
     private fun drawDiffraction() {
-        /*if (whiteLightCheckbox!!.isSelected) {
+        if (combinedWavelength) {
             drawCombinedDiffraction()
             return
-        }*/
+        }
 
         fraunhoferDiffraction.λ = wavelengthSlider!!.value * 1e-9
         fraunhoferDiffraction.D = projectDistSlider!!.value
         fraunhoferDiffraction.N = slitCountInput!!.value
         fraunhoferDiffraction.a = slitWidthInput!!.text.toDouble() * 10e-9
         fraunhoferDiffraction.b = slitDistInput!!.text.toDouble() * 10e-9
-        val first = -PI / 4 // / 200
-        val second = PI / 4 // / 200
+        val first = -PI / 4
+        val second = PI / 4
         val step = (second - first) / 30000
 
         intensity = Intensity(fraunhoferDiffraction.λ, fraunhoferDiffraction.calcInterval(first, second, step))
