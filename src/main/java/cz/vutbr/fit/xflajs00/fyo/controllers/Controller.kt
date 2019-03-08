@@ -17,6 +17,7 @@ import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.util.converter.NumberStringConverter
 import kotlin.math.PI
+import kotlin.math.sin
 
 
 class Controller {
@@ -233,7 +234,9 @@ class Controller {
             val rgb = waveLengthToRGB(value.waveLength)
             d.addValues(value.intensities, Color(rgb[0], rgb[1], rgb[2], 1.0))
         }
-        d.addXAxisText("0°", 0.5)
+        d.addXAxisText("", 0.5)
+        d.addXAxisText((-getViewLength() / 2).toString() + "m", 0.25)
+        d.addXAxisText((getViewLength() / 2).toString() + "m", 0.75)
         d.draw()
     }
 
@@ -266,10 +269,11 @@ class Controller {
         val d = SimplePlotDrawer(graphCanvas!!)
         d.addValues(intensity!!.intensities, Color.RED)
         d.addValues(intensityN1!!.intensities, Color.BLUE)
-        d.addXAxisText("0°", 0.5)
+        d.addXAxisText("", 0.5)
+        d.addXAxisText((-getViewLength() / 2).toString() + "m", 0.25)
+        d.addXAxisText((getViewLength() / 2).toString() + "m", 0.75)
         d.draw()
     }
-
 
     fun saveDiffractionPattern() {
         val loader = FXMLLoader()
@@ -305,5 +309,7 @@ class Controller {
     }
 
     private fun getFOVRad() = fovSlider!!.value * (PI / 180)
+
+    private fun getViewLength() = projectDistSlider!!.value / sin(90 * (PI / 180) - getFOVRad()) * sin(getFOVRad())
 
 }

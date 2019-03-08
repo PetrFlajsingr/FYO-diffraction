@@ -87,7 +87,7 @@
                 </HBox>
                 <Separator prefWidth="200.0"/>
                 <Label text="Field of view"/>
-                <Slider fx:id="fovSlider" majorTickUnit="10.0" max="90.0" min="10.0" minorTickCount="5"
+                <Slider fx:id="fovSlider" majorTickUnit="10.0" max="89.0" min="1.0" minorTickCount="5"
                         showTickLabels="true" showTickMarks="true" value="45.0"/>
                 <Label fx:id="degreeLabel" text="45°"/>
             </VBox>
