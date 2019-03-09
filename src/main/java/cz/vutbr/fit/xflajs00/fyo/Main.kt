@@ -9,7 +9,6 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.stage.Stage
 import java.io.File
-import java.net.URI
 
 // TODO custom color config
 // angles in graph
@@ -27,7 +26,7 @@ fun prepareConfFiles() {
     val lightSources = Main::class.java.classLoader.getResourceAsStream("light_sources.conf")
     val settings = Main::class.java.classLoader.getResourceAsStream("settings.conf")
 
-    var jarLocation = getJarLocation()
+    val jarLocation = getJarLocation()
 
     val settingsFile = File("$jarLocation\\settings.conf")
     settingsFile.createNewFile()

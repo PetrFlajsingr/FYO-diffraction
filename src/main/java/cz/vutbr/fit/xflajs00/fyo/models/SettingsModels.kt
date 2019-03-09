@@ -6,9 +6,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
-import sun.font.LayoutPathImpl.getPath
-import java.net.URI
-import java.net.URLDecoder
 
 
 
@@ -174,11 +171,11 @@ class ConfigModel(key: String, value: String) {
 }
 
 fun stripFile(path: String): String {
-    return if (path.startsWith("file:\\")) {
-        path.substring(("file:\\").length)
-    } else if (path.startsWith("jar:file\\")) {
-        path.substring(("jar:file\\").length)
-    } else {
-        path
+    return when {
+        path.startsWith("file:\\") -> path.substring(("file:\\").length)
+        path.startsWith("file:") -> path.substring(("file:").length)
+        path.startsWith("jar:file\\") -> path.substring(("jar:file\\").length)
+        path.startsWith("jar:file") -> path.substring(("jar:file").length)
+        else -> path
     }
 }
