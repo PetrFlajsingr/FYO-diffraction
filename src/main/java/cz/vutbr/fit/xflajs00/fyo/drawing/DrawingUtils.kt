@@ -15,6 +15,8 @@ class Resolution(val width: Int, val height: Int)
  * @param scaleFactor intensities scaling factor
  */
 fun drawIntensity(canvas: Canvas, intensity: Intensity, scaleFactor: Double = 1.0, drawColor: Boolean = true) {
+    canvas.graphicsContext2D.fill = Color.BLACK
+    canvas.graphicsContext2D.fillRect(0.0, 0.0, canvas.width, canvas.height)
     val step = intensity.intensities.size / canvas.width
     var curPos = 0.0
     val rgb = waveLengthToRGB(intensity.waveLength, 0.01)
@@ -48,6 +50,8 @@ fun drawIntensity(canvas: Canvas, intensity: Intensity, scaleFactor: Double = 1.
  * #param scaleFactor intensities scaling factor
  */
 fun drawCombinedIntensity(canvas: Canvas, intensities: List<Intensity>, scaleFactor: Double = 1.0, drawColor: Boolean = true) {
+    canvas.graphicsContext2D.fill = Color.BLACK
+    canvas.graphicsContext2D.fillRect(0.0, 0.0, canvas.width, canvas.height)
     val resultColors = Array(canvas.width.toInt()) { DoubleArray(3) { 0.0 } }
     for (intensity in intensities) {
         val step = intensity.intensities.size / canvas.width
